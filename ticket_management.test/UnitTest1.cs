@@ -28,9 +28,9 @@ namespace ticket_management.test
         {
                 new Comments{
             Comment = "Hello World",
-            CreatedBy = "Sandeep",
+            CreatedBy = 1,
             CreatedOn = DateTime.Now,
-            UpdatedBy = "Sandeep",
+            UpdatedBy = 1,
             UpdatedOn = DateTime.Now
             }
         },
@@ -43,9 +43,9 @@ namespace ticket_management.test
             Priority = "High",
             Sla = 1321,
             Source = "Twitter",
-            CreatedBy = "Sandeep",
+            CreatedBy = 1,
             CreatedOn = DateTime.Now,
-            UpdatedBy = "Sandeep",
+            UpdatedBy = 1,
             UpdatedOn = DateTime.Now
         };
         Ticket t2 = new Ticket()
@@ -55,9 +55,9 @@ namespace ticket_management.test
         {
                 new Comments{
             Comment = "Heey",
-            CreatedBy = "Sai",
+            CreatedBy = 1,
             CreatedOn = DateTime.Now,
-            UpdatedBy = "sai",
+            UpdatedBy = 1,
             UpdatedOn = DateTime.Now
             }
         },
@@ -70,9 +70,9 @@ namespace ticket_management.test
             Priority = "Low",
             Sla = 324,
             Source = "Chat",
-            CreatedBy = "Sandeep",
+            CreatedBy = 1,
             CreatedOn = DateTime.Now,
-            UpdatedBy = "Sandeep",
+            UpdatedBy = 1,
             UpdatedOn = DateTime.Now
         };
 
@@ -85,9 +85,9 @@ namespace ticket_management.test
           new Comments{
             CommentId = 2,
             Comment = "Heey",
-            CreatedBy = "Sai",
+            CreatedBy = 2,
             CreatedOn = DateTime.Now,
-            UpdatedBy = "sai",
+            UpdatedBy = 2,
             UpdatedOn = DateTime.Now
             }
         },
@@ -100,9 +100,9 @@ namespace ticket_management.test
             Priority = "Low",
             Sla = 324,
             Source = "Chat",
-            CreatedBy = "Sandeep",
+            CreatedBy = 1,
             CreatedOn = DateTime.Now,
-            UpdatedBy = "Sandeep",
+            UpdatedBy = 1,
             UpdatedOn = DateTime.Now
         };
 
@@ -110,7 +110,7 @@ namespace ticket_management.test
         {
             Description = "Heey",
             Customerhandle = "something@gmail.com",
-            Chatid = "Twitter/124",
+            Connectionid = "Twitter/124",
             Userid = 1
         };
 

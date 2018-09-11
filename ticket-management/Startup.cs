@@ -49,7 +49,7 @@ namespace ticket_management
 
             services.AddCors(
                 options => options.AddPolicy("allowaccess",
-                builder => builder.WithOrigins("http://localhost:4200")
+                builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()
                 ));
 
 

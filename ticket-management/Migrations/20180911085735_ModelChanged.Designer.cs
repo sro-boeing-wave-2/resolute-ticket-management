@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ticket_management.Models;
 
 namespace ticket_management.Migrations
 {
     [DbContext(typeof(TicketContext))]
-    partial class TicketContextModelSnapshot : ModelSnapshot
+    [Migration("20180911085735_ModelChanged")]
+    partial class ModelChanged
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,13 +29,13 @@ namespace ticket_management.Migrations
 
                     b.Property<string>("Comment");
 
-                    b.Property<long>("CreatedBy");
+                    b.Property<string>("CreatedBy");
 
                     b.Property<DateTime>("CreatedOn");
 
                     b.Property<long?>("TicketId");
 
-                    b.Property<long>("UpdatedBy");
+                    b.Property<string>("UpdatedBy");
 
                     b.Property<DateTime>("UpdatedOn");
 

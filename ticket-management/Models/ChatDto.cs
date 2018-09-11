@@ -11,7 +11,6 @@ namespace ticket_management.Models
         string description;
         long userid;
         string customerhandle;
-
         public string Description { get => description; set => description = value; }
         public string Customerhandle { get => customerhandle; set => customerhandle = value; }
         public long Userid { get => userid; set => userid = value; }

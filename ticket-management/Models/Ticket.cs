@@ -23,11 +23,11 @@ namespace ticket_management.Models
     long sla;
     List<Comments> comment;
     DateTime createdOn;
-    String createdBy;
+    long createdBy;
     DateTime updatedOn;
     long userid;
     long customerid;
-    string updatedBy;
+    long updatedBy;
     string connectionid;
     [Key]
     public long TicketId { get => ticketId; set => ticketId = value; }
@@ -39,9 +39,9 @@ namespace ticket_management.Models
     public long Sla { get => sla; set => sla = value; }
     public List<Comments> Comment { get => comment; set => comment = value; }
     public DateTime CreatedOn { get => createdOn; set => createdOn = value; }
-    public string CreatedBy { get => createdBy; set => createdBy = value; }
+    public long CreatedBy { get => createdBy; set => createdBy = value; }
     public DateTime UpdatedOn { get => updatedOn; set => updatedOn = value; }
-    public string UpdatedBy { get => updatedBy; set => updatedBy = value; }
+    public long UpdatedBy { get => updatedBy; set => updatedBy = value; }
     public long Agentid { get => agentid; set => agentid = value; }
     public long Departmentid { get => departmentid; set => departmentid = value; }
     public long Userid { get => userid; set => userid = value; }

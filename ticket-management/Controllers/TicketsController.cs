@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ticket_management.Models;
 using ticket_management.contract;
+using static ticket_management.Models.OnboardingUser;
 
 namespace ticket_management.Controllers
 {
@@ -23,9 +24,9 @@ namespace ticket_management.Controllers
 
         // GET: api/Tickets
         [HttpGet]
-        public IEnumerable<Ticket> GetAllTicket()
+        public IEnumerable<Ticket> GetAllTicket([FromHeader] int departmentid)
         {
-            return _ticketService.GetTickets();
+            return _ticketService.GetTickets(departmentid);
         }
 
 
@@ -33,12 +34,13 @@ namespace ticket_management.Controllers
         [Route("detail/{id}")]
         public async Task<IActionResult> GetTicketById([FromRoute] int id)
         {
+            
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            Ticket ticket = await _ticketService.GetById(id);
+            TicketDetailsDto ticket = await _ticketService.GetById(id);
 
             if (ticket == null)
             {
@@ -51,17 +53,17 @@ namespace ticket_management.Controllers
 
         //for user
         [Route("count")]
-        public async Task<TicketCount> CountTickets([FromRoute] string status)
+        public async Task<TicketCount> CountTickets([FromRoute] string status, [FromHeader] int agentId, [FromHeader] int departmentid)
         {
-            return await _ticketService.GetCount();
+            return await _ticketService.GetCount(agentId, departmentid);
         }
 
 
 
         [Route("status/{status}")]
-        public IEnumerable<Ticket> GetTicketByStatus([FromRoute] string status)
+        public IEnumerable<Ticket> GetTicketByStatus([FromRoute] string status, [FromHeader] int agentId, [FromHeader] int departmentid)
         {
-            return _ticketService.GetByStatus(status);
+            return _ticketService.GetByStatus(status, agentId, departmentid);
         }
 
         [Route("filter")]
@@ -91,14 +93,30 @@ namespace ticket_management.Controllers
             return Ok(ticket);
         }
 
-
-
+        [HttpPut("updatecomment")]
+        public async Task<IActionResult> UpdateTicketComment([FromBody] CommentDto comment)
+        {
+            await _ticketService.UpdateTicketComment(comment);
+            return Ok(comment);
+        }
         // PUT: api/Tickets/5
         [HttpPut("{id}")]
         public async Task<IActionResult> EditTicket([FromRoute] int id, [FromBody] Ticket ticket)
         {
             await _ticketService.EditTicket(ticket);
             return Ok(ticket);
+        }
+
+        [HttpPut("status")]
+        public async Task<IActionResult> EditTicketByStatus([FromBody] StatusDto ticket) {
+            await _ticketService.EditTicketByStatus(ticket);
+            return Ok(ticket);
+        }
+        [HttpPut("priority")]
+        public async Task<IActionResult> EditTicketByPriority([FromBody] PriorityDto priority)
+        {
+            await _ticketService.EditTicketByPriority(priority);
+            return Ok(priority);
         }
 
         IList<Ticket> GetPage(IList<Ticket> list, int page, int pageSize)
