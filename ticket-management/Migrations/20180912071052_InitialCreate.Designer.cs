@@ -10,8 +10,8 @@ using ticket_management.Models;
 namespace ticket_management.Migrations
 {
     [DbContext(typeof(TicketContext))]
-    [Migration("20180907100635_chatconnection")]
-    partial class chatconnection
+    [Migration("20180912071052_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -29,13 +29,13 @@ namespace ticket_management.Migrations
 
                     b.Property<string>("Comment");
 
-                    b.Property<string>("CreatedBy");
+                    b.Property<long>("CreatedBy");
 
                     b.Property<DateTime>("CreatedOn");
 
                     b.Property<long?>("TicketId");
 
-                    b.Property<string>("UpdatedBy");
+                    b.Property<long>("UpdatedBy");
 
                     b.Property<DateTime>("UpdatedOn");
 
@@ -56,7 +56,7 @@ namespace ticket_management.Migrations
 
                     b.Property<string>("Connectionid");
 
-                    b.Property<string>("CreatedBy");
+                    b.Property<long>("CreatedBy");
 
                     b.Property<DateTime>("CreatedOn");
 
@@ -76,7 +76,7 @@ namespace ticket_management.Migrations
 
                     b.Property<string>("Subject");
 
-                    b.Property<string>("UpdatedBy");
+                    b.Property<long>("UpdatedBy");
 
                     b.Property<DateTime>("UpdatedOn");
 

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ticket_management.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -21,13 +21,14 @@ namespace ticket_management.Migrations
                     Status = table.Column<int>(nullable: false),
                     Sla = table.Column<long>(nullable: false),
                     CreatedOn = table.Column<DateTime>(nullable: false),
-                    CreatedBy = table.Column<string>(nullable: true),
+                    CreatedBy = table.Column<long>(nullable: false),
                     UpdatedOn = table.Column<DateTime>(nullable: false),
-                    UpdatedBy = table.Column<string>(nullable: true),
+                    UpdatedBy = table.Column<long>(nullable: false),
                     Agentid = table.Column<long>(nullable: false),
                     Departmentid = table.Column<long>(nullable: false),
                     Userid = table.Column<long>(nullable: false),
-                    Customerid = table.Column<long>(nullable: false)
+                    Customerid = table.Column<long>(nullable: false),
+                    Connectionid = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -42,9 +43,9 @@ namespace ticket_management.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Comment = table.Column<string>(nullable: true),
                     CreatedOn = table.Column<DateTime>(nullable: false),
-                    CreatedBy = table.Column<string>(nullable: true),
+                    CreatedBy = table.Column<long>(nullable: false),
                     UpdatedOn = table.Column<DateTime>(nullable: false),
-                    UpdatedBy = table.Column<string>(nullable: true),
+                    UpdatedBy = table.Column<long>(nullable: false),
                     TicketId = table.Column<long>(nullable: true)
                 },
                 constraints: table =>
