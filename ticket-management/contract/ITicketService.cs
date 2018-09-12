@@ -18,6 +18,6 @@ namespace ticket_management.contract
         Task EditTicketByPriority(PriorityDto ticket);
         Task UpdateTicketComment(CommentDto comment);
         IEnumerable<Ticket> Filter(int agentid, int departmentid, int userid, int customerid,
-                string source, string priority, string status);
+                string source, string priority, string status, int pageno, int size);
     }
 }

@@ -30,13 +30,17 @@ namespace ticket_management.Services
             Ticket CompleteTicketDetails = await _context.Ticket
                                                 .Include(x => x.Comment)
                                                 .SingleOrDefaultAsync(x => x.TicketId == id);
-            //HttpClient httpclient = new HttpClient();
-            //string url = "http://172.23.238.225:5002/api/endusers/query?id=" + CompleteTicketDetails.Userid;
-            //var response = await httpclient.GetAsync(url);
-            //var userName = await response.Content.ReadAsStringAsync();
+            HttpClient httpclient = new HttpClient();
+            string url = "http://35.189.155.116:8082/api/endusers/" + CompleteTicketDetails.Userid;
+            var response = await httpclient.GetAsync(url);
+            var result = await response.Content.ReadAsStringAsync();
+            OnboardingUser.EndUser responsejson = JsonConvert.DeserializeObject<OnboardingUser.EndUser>(result);
+
+            var userName = await response.Content.ReadAsStringAsync();
             TicketDetailsDto Ticket = new TicketDetailsDto();
             Ticket.Id = CompleteTicketDetails.TicketId;
-            Ticket.Name = "userName";
+            Ticket.Name = responsejson.Name;
+            Ticket.Userid = CompleteTicketDetails.Userid;
             Ticket.Priority = CompleteTicketDetails.Priority;
             Ticket.Status = CompleteTicketDetails.Status;
             Ticket.Subject = CompleteTicketDetails.Subject;
@@ -131,8 +135,12 @@ namespace ticket_management.Services
         }
 
         public IEnumerable<Ticket> Filter(int agentid, int departmentid, int userid, int customerid,
-                string source, string priority, string status)
+                string source, string priority, string status, int pageno, int size)
         {
+            if (pageno == 0 || size == 0) {
+                pageno = 1;
+                size = 20;
+            }
             return _context.Ticket.Include(x => x.Comment).Where(n =>
            (
                n.Agentid == ((agentid != 0) ? agentid : n.Agentid) &&
@@ -143,7 +151,7 @@ namespace ticket_management.Services
                n.Priority == (String.IsNullOrEmpty(priority) ? n.Priority : priority) &&
                n.Status.ToString() == (String.IsNullOrEmpty(status) ? n.Status.ToString() : status)
            )
-           );
+           ).Skip((pageno - 1)*size).Take(size); 
          }
     }
 

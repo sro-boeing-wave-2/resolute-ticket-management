@@ -50,10 +50,9 @@ namespace ticket_management.Controllers
             return Ok(ticket);
         }
 
-
         //for user
         [Route("count")]
-        public async Task<TicketCount> CountTickets([FromRoute] string status, [FromHeader] int agentId, [FromHeader] int departmentid)
+        public async Task<TicketCount> CountTickets([FromHeader] int agentId, [FromHeader] int departmentid)
         {
             return await _ticketService.GetCount(agentId, departmentid);
         }
@@ -73,13 +72,13 @@ namespace ticket_management.Controllers
             [FromQuery] int customerid,
             [FromQuery] string source,
             [FromQuery] string priority,
-            [FromQuery] string status)
+            [FromQuery] string status,
+            [FromQuery] int page,
+            [FromQuery] int pagesize)
         {
             return _ticketService.Filter(agentid, departmentid, userid, customerid,
-               source, priority, status);
+               source, priority, status, page, pagesize);
         }
-
-
 
         [HttpPost]
         public async Task<IActionResult> CreateTicket([FromBody] ChatDto chat)
