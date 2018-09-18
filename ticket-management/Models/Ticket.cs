@@ -29,6 +29,8 @@ namespace ticket_management.Models
     long customerid;
     long updatedBy;
     string connectionid;
+    int feedbackscore;
+
     [Key]
     public long TicketId { get => ticketId; set => ticketId = value; }
     public string Subject { get => subject; set => subject = value; }
@@ -47,6 +49,7 @@ namespace ticket_management.Models
     public long Userid { get => userid; set => userid = value; }
     public long Customerid { get => customerid; set => customerid = value; }
     public string Connectionid { get => connectionid; set => connectionid = value; }
+    public int Feedbackscore { get => feedbackscore; set => feedbackscore = value; }
     }
 
 }

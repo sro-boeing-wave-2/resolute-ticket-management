@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using ticket_management.Models;
 using ticket_management.contract;
 using ticket_management.Services;
+
 
 namespace ticket_management
 {
@@ -21,6 +15,7 @@ namespace ticket_management
     {
         public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
+           
             Configuration = configuration;
             _env = env;
         }
@@ -43,7 +38,6 @@ namespace ticket_management
             
                 services.AddDbContext<TicketContext>(options =>
                      options.UseSqlServer(Configuration.GetConnectionString("TicketContext")));
-            
 
             services.AddScoped<ITicketService, TicketService>();
 

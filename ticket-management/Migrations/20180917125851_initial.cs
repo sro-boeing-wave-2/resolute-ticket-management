@@ -4,10 +4,26 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ticket_management.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Analytics",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Date = table.Column<DateTime>(nullable: false),
+                    Avgresolutiontime = table.Column<string>(nullable: true),
+                    Csatscore = table.Column<double>(nullable: false),
+                    Customerid = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Analytics", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Ticket",
                 columns: table => new
@@ -21,13 +37,15 @@ namespace ticket_management.Migrations
                     Status = table.Column<int>(nullable: false),
                     Sla = table.Column<long>(nullable: false),
                     CreatedOn = table.Column<DateTime>(nullable: false),
-                    CreatedBy = table.Column<string>(nullable: true),
+                    CreatedBy = table.Column<long>(nullable: false),
                     UpdatedOn = table.Column<DateTime>(nullable: false),
-                    UpdatedBy = table.Column<string>(nullable: true),
+                    UpdatedBy = table.Column<long>(nullable: false),
                     Agentid = table.Column<long>(nullable: false),
                     Departmentid = table.Column<long>(nullable: false),
                     Userid = table.Column<long>(nullable: false),
-                    Customerid = table.Column<long>(nullable: false)
+                    Customerid = table.Column<long>(nullable: false),
+                    Connectionid = table.Column<string>(nullable: true),
+                    Feedbackscore = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -42,9 +60,9 @@ namespace ticket_management.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Comment = table.Column<string>(nullable: true),
                     CreatedOn = table.Column<DateTime>(nullable: false),
-                    CreatedBy = table.Column<string>(nullable: true),
+                    CreatedBy = table.Column<long>(nullable: false),
                     UpdatedOn = table.Column<DateTime>(nullable: false),
-                    UpdatedBy = table.Column<string>(nullable: true),
+                    UpdatedBy = table.Column<long>(nullable: false),
                     TicketId = table.Column<long>(nullable: true)
                 },
                 constraints: table =>
@@ -66,6 +84,9 @@ namespace ticket_management.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Analytics");
+
             migrationBuilder.DropTable(
                 name: "Comments");
 

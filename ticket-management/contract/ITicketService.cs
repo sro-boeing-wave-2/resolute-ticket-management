@@ -13,6 +13,8 @@ namespace ticket_management.contract
         IEnumerable<Ticket> GetByStatus(string status, int agentId, int departmentid);
         Task<TicketCount> GetCount(int agentId, int departmentid);
         IEnumerable<Ticket> GetTickets(int departmentid);
+        AnalyticsUIDto GetAnalytics();
+        Task<Analytics> UpdateAnalytics();        
         Task EditTicket(Ticket ticket);
         Task EditTicketByStatus(StatusDto ticket);
         Task EditTicketByPriority(PriorityDto ticket);

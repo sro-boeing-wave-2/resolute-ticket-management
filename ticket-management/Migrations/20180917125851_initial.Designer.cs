@@ -10,8 +10,8 @@ using ticket_management.Models;
 namespace ticket_management.Migrations
 {
     [DbContext(typeof(TicketContext))]
-    [Migration("20180907100635_chatconnection")]
-    partial class chatconnection
+    [Migration("20180917125851_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,6 +21,25 @@ namespace ticket_management.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("ticket_management.Models.Analytics", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Avgresolutiontime");
+
+                    b.Property<double>("Csatscore");
+
+                    b.Property<int>("Customerid");
+
+                    b.Property<DateTime>("Date");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Analytics");
+                });
+
             modelBuilder.Entity("ticket_management.Models.Comments", b =>
                 {
                     b.Property<long>("CommentId")
@@ -29,13 +48,13 @@ namespace ticket_management.Migrations
 
                     b.Property<string>("Comment");
 
-                    b.Property<string>("CreatedBy");
+                    b.Property<long>("CreatedBy");
 
                     b.Property<DateTime>("CreatedOn");
 
                     b.Property<long?>("TicketId");
 
-                    b.Property<string>("UpdatedBy");
+                    b.Property<long>("UpdatedBy");
 
                     b.Property<DateTime>("UpdatedOn");
 
@@ -56,7 +75,7 @@ namespace ticket_management.Migrations
 
                     b.Property<string>("Connectionid");
 
-                    b.Property<string>("CreatedBy");
+                    b.Property<long>("CreatedBy");
 
                     b.Property<DateTime>("CreatedOn");
 
@@ -65,6 +84,8 @@ namespace ticket_management.Migrations
                     b.Property<long>("Departmentid");
 
                     b.Property<string>("Description");
+
+                    b.Property<int>("Feedbackscore");
 
                     b.Property<string>("Priority");
 
@@ -76,7 +97,7 @@ namespace ticket_management.Migrations
 
                     b.Property<string>("Subject");
 
-                    b.Property<string>("UpdatedBy");
+                    b.Property<long>("UpdatedBy");
 
                     b.Property<DateTime>("UpdatedOn");
 

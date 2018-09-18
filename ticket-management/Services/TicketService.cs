@@ -17,13 +17,53 @@ namespace ticket_management.Services
         public TicketService(TicketContext context)
         {
             _context = context;
-            
-    }
+           
+
+        }
 
         public IEnumerable<Ticket> GetTickets(int departmentid)
         {
             return _context.Ticket.Include(x => x.Comment).Where(x => (x.Departmentid == departmentid)).ToList();
         }
+
+       
+
+        public AnalyticsUIDto GetAnalytics()
+        {
+            AnalyticsUIDto Analyticsdata = new AnalyticsUIDto();
+            Analyticsdata.Analyticscsat = new List<AnalyticsCsatDto>();
+            Analyticsdata.Analyticscsat.AddRange(
+                _context.Analytics.ToList().Select(
+                    x => new AnalyticsCsatDto { Date = x.Date, Csatscore = x.Csatscore }
+                    )
+                );
+            TicketCount count = new TicketCount();
+            Analyticsdata.Analyticscount = new List<AnalyticsCountDto>();
+            Analyticsdata.Analyticscount.AddRange(
+                new List<AnalyticsCountDto> {
+                    new AnalyticsCountDto
+                    {
+                        Count = count.Closed,
+                        Tickettype = "Closed"
+                    },
+                    new AnalyticsCountDto
+                    {
+                        Count = count.Due,
+                        Tickettype = "Due"
+                    },
+                    new AnalyticsCountDto
+                    {
+                        Count = count.Open,
+                        Tickettype = "Open"
+                    }
+                }
+            );
+            Analyticsdata.Avgresolutiontime = "5:04:23";
+            return Analyticsdata;
+        }
+
+        
+
 
         public async Task<TicketDetailsDto> GetById(int id)
         {
@@ -53,10 +93,10 @@ namespace ticket_management.Services
         {
             return new TicketCount
             {
-                Open = await _context.Ticket.Where(x => (x.Status == Status.open&&x.Agentid==agentId&&x.Departmentid== departmentid)).CountAsync(),
+                Open = await _context.Ticket.Where(x => (x.Status == Status.open && x.Agentid == agentId && x.Departmentid == departmentid)).CountAsync(),
                 Closed = await _context.Ticket.Where(x => (x.Status == Status.close && x.Agentid == agentId && x.Departmentid == departmentid)).CountAsync(),
                 Due = await _context.Ticket.Where(x => (x.Status == Status.due && x.Departmentid == departmentid)).CountAsync(),
-                Total = await _context.Ticket.Where(x=> (x.Departmentid == departmentid)).CountAsync()
+                Total = await _context.Ticket.Where(x => (x.Departmentid == departmentid)).CountAsync()
             };
         }
 
@@ -65,7 +105,7 @@ namespace ticket_management.Services
             return _context.Ticket.Include(x => x.Comment)
                 .Where(ticket => ticket.Status.ToString() == status
                               && ticket.Departmentid == departmentid
-                              && ticket.Agentid == ((ticket.Status == Status.open || ticket.Status == Status.close) ? agentId: ticket.Agentid)
+                              && ticket.Agentid == ((ticket.Status == Status.open || ticket.Status == Status.close) ? agentId : ticket.Agentid)
                 );
         }
 
@@ -92,13 +132,17 @@ namespace ticket_management.Services
             ticket.CreatedBy = 1;
             ticket.CreatedOn = DateTime.Now;
             ticket.UpdatedBy = 1;
-            ticket.UpdatedOn = DateTime.Now;         
+            ticket.UpdatedOn = DateTime.Now;
             ticket.Comment = new List<Comments>();
-
+            Random random = new Random();
+            ticket.Feedbackscore =  random.Next(0,5);
+            
             _context.Ticket.Add(ticket);
             await _context.SaveChangesAsync();
             return ticket;
         }
+        
+        
 
         public async Task EditTicket(Ticket ticket)
         {
@@ -133,6 +177,28 @@ namespace ticket_management.Services
             editticket.Comment.Add(commentToBeAdded);
             await _context.SaveChangesAsync();
         }
+        //Update analytics csat score
+        public async Task<Analytics> UpdateAnalytics() {
+            DateTime date = DateTime.Now;
+            List<int> ticketscore = new List<int>();
+            ticketscore = _context.Ticket.Where(x => x.UpdatedOn.Date == date.Date && x.Status == Status.close && x.Feedbackscore > 3).Select(x => x.Feedbackscore).ToList();
+            List<int> totalticketscore = new List<int>();
+            totalticketscore = _context.Ticket.Where(x => x.UpdatedOn.Date == date.Date && x.Status == Status.close && x.Feedbackscore > 0).Select(x => x.Feedbackscore).ToList();
+            Console.WriteLine((double)ticketscore.Sum() / totalticketscore.Count());
+            Console.WriteLine(ticketscore.Sum());
+            Console.WriteLine(totalticketscore.Count());
+            double csatscore = (double)ticketscore.Sum() / totalticketscore.Count();
+            Analytics scheduledData = new Analytics();
+            scheduledData.Date = date.Date;
+            scheduledData.Customerid = '1';
+            scheduledData.Avgresolutiontime = "5:0:0";
+            scheduledData.Csatscore = csatscore;
+            await _context.Analytics.AddAsync(scheduledData);
+            await _context.SaveChangesAsync();
+            return scheduledData;
+        }
+
+        
 
         public IEnumerable<Ticket> Filter(int agentid, int departmentid, int userid, int customerid,
                 string source, string priority, string status, int pageno, int size)

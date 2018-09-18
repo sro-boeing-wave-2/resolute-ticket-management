@@ -29,12 +29,17 @@ namespace ticket_management.Controllers
             return _ticketService.GetTickets(departmentid);
         }
 
-
+        [HttpGet("Analytics")]
+        public AnalyticsUIDto GetAnalytics()
+        {
+            return _ticketService.GetAnalytics();
+        }
+        
 
         [Route("detail/{id}")]
         public async Task<IActionResult> GetTicketById([FromRoute] int id)
         {
-            
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -90,6 +95,15 @@ namespace ticket_management.Controllers
 
             Ticket ticket = await _ticketService.CreateTicket(chat);
             return Ok(ticket);
+        }
+     
+
+        [HttpGet("analytics/update")]
+        public async Task<IActionResult> createAnalysis1()
+        {
+            Analytics analyticsdata = await _ticketService.UpdateAnalytics();
+            return Ok(analyticsdata);
+
         }
 
         [HttpPut("updatecomment")]

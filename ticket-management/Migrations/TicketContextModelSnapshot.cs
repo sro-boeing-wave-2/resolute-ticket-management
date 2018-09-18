@@ -19,6 +19,25 @@ namespace ticket_management.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("ticket_management.Models.Analytics", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Avgresolutiontime");
+
+                    b.Property<double>("Csatscore");
+
+                    b.Property<int>("Customerid");
+
+                    b.Property<DateTime>("Date");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Analytics");
+                });
+
             modelBuilder.Entity("ticket_management.Models.Comments", b =>
                 {
                     b.Property<long>("CommentId")
@@ -63,6 +82,8 @@ namespace ticket_management.Migrations
                     b.Property<long>("Departmentid");
 
                     b.Property<string>("Description");
+
+                    b.Property<int>("Feedbackscore");
 
                     b.Property<string>("Priority");
 
