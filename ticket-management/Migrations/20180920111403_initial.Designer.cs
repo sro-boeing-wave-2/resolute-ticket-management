@@ -10,7 +10,7 @@ using ticket_management.Models;
 namespace ticket_management.Migrations
 {
     [DbContext(typeof(TicketContext))]
-    [Migration("20180917125851_initial")]
+    [Migration("20180920111403_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

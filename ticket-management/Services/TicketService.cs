@@ -122,7 +122,7 @@ namespace ticket_management.Services
             ticket.Source = "twitter";
             ticket.Sla = 123;
             ticket.Priority = "High";
-            ticket.Status = Status.close;
+            ticket.Status = Status.open;
             ticket.Agentid = 1;
             ticket.Userid = chat.Userid;
             ticket.Customerid = 1;
