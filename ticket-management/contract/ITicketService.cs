@@ -21,5 +21,6 @@ namespace ticket_management.contract
         Task UpdateTicketComment(CommentDto comment);
         IEnumerable<Ticket> Filter(long agentid, long departmentid, long userid, long customerid,
                 string source, string priority, string status, int pageno, int size);
+        Task<List<TopAgentsDto>> GetTopAgents();
     }
 }

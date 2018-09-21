@@ -29,6 +29,13 @@ namespace ticket_management.Controllers
             return _ticketService.GetTickets(departmentid);
         }
 
+        [HttpGet("leaderboard")]
+        public async Task<IActionResult> GetTopAgents()
+        {
+            var topAgents = await _ticketService.GetTopAgents();
+            return Ok(topAgents);
+        }
+
         [HttpGet("Analytics")]
         public async Task<AnalyticsUIDto> GetAnalytics([FromHeader] long agentid, [FromHeader] long departmentid)
         {

@@ -63,7 +63,30 @@ namespace ticket_management.Services
             return Analyticsdata;
         }
 
-        
+        public async Task<List<TopAgentsDto>> GetTopAgents()
+        {
+            HttpClient httpclient = new HttpClient();
+            var listOfAgents = _context.Ticket.Where(x => x.Status == Status.close)
+                .GroupBy(x => x.Agentid).OrderByDescending(x => x.Count()).Take(3).ToList();
+            List<TopAgentsDto> agentsList = new List<TopAgentsDto>(); foreach (var agentTickets in listOfAgents)
+            {
+                string url = "http://35.221.125.153:8082/api/agents/leaderboard?id="
+        + agentTickets.Key;
+                var response = await httpclient.GetAsync(url);
+                var result = await response.Content.ReadAsStringAsync();
+                TopAgentsDto responsejson = JsonConvert
+                    .DeserializeObject<TopAgentsDto>(result);
+                TopAgentsDto agent = new TopAgentsDto
+                {
+                    NumberOfTicketsResolved = agentTickets.Count(),
+                    Name = responsejson.Name,
+                    DepartmentName = responsejson.DepartmentName,
+                    ProfileImageUrl = responsejson.ProfileImageUrl
+                };
+                agentsList.Add(agent);
+            }
+            return agentsList;
+        }
 
 
         public async Task<TicketDetailsDto> GetById(long id)
