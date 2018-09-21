@@ -29,7 +29,7 @@ namespace ticket_management.Controllers
             return _ticketService.GetTickets(departmentid);
         }
 
-        [HttpGet("leaderboard")]
+        [Route("leaderboard")]
         public async Task<IActionResult> GetTopAgents()
         {
             var topAgents = await _ticketService.GetTopAgents();
