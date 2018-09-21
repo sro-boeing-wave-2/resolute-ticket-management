@@ -21,14 +21,14 @@ namespace ticket_management.Services
 
         }
 
-        public IEnumerable<Ticket> GetTickets(int departmentid)
+        public IEnumerable<Ticket> GetTickets(long departmentid)
         {
             return _context.Ticket.Include(x => x.Comment).Where(x => (x.Departmentid == departmentid)).ToList();
         }
 
        
 
-        public AnalyticsUIDto GetAnalytics()
+        public async Task<AnalyticsUIDto> GetAnalytics(long agentId, long departmentid)
         {
             AnalyticsUIDto Analyticsdata = new AnalyticsUIDto();
             Analyticsdata.Analyticscsat = new List<AnalyticsCsatDto>();
@@ -37,23 +37,24 @@ namespace ticket_management.Services
                     x => new AnalyticsCsatDto { Date = x.Date, Csatscore = x.Csatscore }
                     )
                 );
+            
             TicketCount count = new TicketCount();
             Analyticsdata.Analyticscount = new List<AnalyticsCountDto>();
             Analyticsdata.Analyticscount.AddRange(
                 new List<AnalyticsCountDto> {
                     new AnalyticsCountDto
                     {
-                        Count = count.Closed,
+                        Count = await _context.Ticket.Where(x => (x.Status == Status.close && x.Agentid == agentId && x.Departmentid == departmentid)).CountAsync(),
                         Tickettype = "Closed"
                     },
                     new AnalyticsCountDto
                     {
-                        Count = count.Due,
+                        Count = await _context.Ticket.Where(x => (x.Status == Status.due && x.Departmentid == departmentid)).CountAsync(),
                         Tickettype = "Due"
                     },
                     new AnalyticsCountDto
                     {
-                        Count = count.Open,
+                        Count = await _context.Ticket.Where(x => (x.Status == Status.open && x.Agentid == agentId && x.Departmentid == departmentid)).CountAsync(),
                         Tickettype = "Open"
                     }
                 }
@@ -65,7 +66,7 @@ namespace ticket_management.Services
         
 
 
-        public async Task<TicketDetailsDto> GetById(int id)
+        public async Task<TicketDetailsDto> GetById(long id)
         {
             Ticket CompleteTicketDetails = await _context.Ticket
                                                 .Include(x => x.Comment)
@@ -90,7 +91,7 @@ namespace ticket_management.Services
             return Ticket;
         }
 
-        public async Task<TicketCount> GetCount(int agentId, int departmentid)
+        public async Task<TicketCount> GetCount(long agentId, long departmentid)
         {
             return new TicketCount
             {
@@ -101,7 +102,7 @@ namespace ticket_management.Services
             };
         }
 
-        public IEnumerable<Ticket> GetByStatus(string status, int agentId, int departmentid)
+        public IEnumerable<Ticket> GetByStatus(string status, long agentId, long departmentid)
         {
             return _context.Ticket.Include(x => x.Comment)
                 .Where(ticket => ticket.Status.ToString() == status
@@ -201,7 +202,7 @@ namespace ticket_management.Services
 
         
 
-        public IEnumerable<Ticket> Filter(int agentid, int departmentid, int userid, int customerid,
+        public IEnumerable<Ticket> Filter(long agentid, long departmentid, long userid, long customerid,
                 string source, string priority, string status, int pageno, int size)
         {
             if (pageno == 0 || size == 0) {

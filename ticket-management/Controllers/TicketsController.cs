@@ -24,15 +24,15 @@ namespace ticket_management.Controllers
 
         // GET: api/Tickets
         [HttpGet]
-        public IEnumerable<Ticket> GetAllTicket([FromHeader] int departmentid)
+        public IEnumerable<Ticket> GetAllTicket([FromHeader] long departmentid)
         {
             return _ticketService.GetTickets(departmentid);
         }
 
         [HttpGet("Analytics")]
-        public AnalyticsUIDto GetAnalytics()
+        public async Task<AnalyticsUIDto> GetAnalytics([FromHeader] long agentid, [FromHeader] long departmentid)
         {
-            return _ticketService.GetAnalytics();
+            return await _ticketService.GetAnalytics(agentid, departmentid);
         }
         
 
