@@ -86,6 +86,7 @@ namespace ticket_management.Services
             Ticket.Subject = CompleteTicketDetails.Subject;
             Ticket.Description = CompleteTicketDetails.Description;
             Ticket.Comment = CompleteTicketDetails.Comment;
+            Ticket.Connectionid = CompleteTicketDetails.Connectionid;
             return Ticket;
         }
 
