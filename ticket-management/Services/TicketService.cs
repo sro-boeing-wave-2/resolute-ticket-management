@@ -71,7 +71,7 @@ namespace ticket_management.Services
                                                 .Include(x => x.Comment)
                                                 .SingleOrDefaultAsync(x => x.TicketId == id);
             HttpClient httpclient = new HttpClient();
-            string url = "http://35.189.155.116:8082/api/endusers/" + CompleteTicketDetails.Userid;
+            string url = "http://35.221.125.153:8082/api/endusers/" + CompleteTicketDetails.Userid;
             var response = await httpclient.GetAsync(url);
             var result = await response.Content.ReadAsStringAsync();
             OnboardingUser.EndUser responsejson = JsonConvert.DeserializeObject<OnboardingUser.EndUser>(result);
@@ -86,6 +86,7 @@ namespace ticket_management.Services
             Ticket.Subject = CompleteTicketDetails.Subject;
             Ticket.Description = CompleteTicketDetails.Description;
             Ticket.Comment = CompleteTicketDetails.Comment;
+            Ticket.Connectionid = CompleteTicketDetails.Connectionid;
             return Ticket;
         }
 
