@@ -1,9 +1,10 @@
 version: "3"
 services:
     web:
+        container_name: Ticket-Management
         build: ticket-management/
-        ports:
-            - "8083:5000"
+        environment: 
+            SERVICE_NAME: auth    
         depends_on:
             - db
     db:
