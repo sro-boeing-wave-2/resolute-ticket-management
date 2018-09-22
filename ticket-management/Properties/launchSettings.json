@@ -24,7 +24,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Staging"
       },
-      "applicationUrl": "http://0.0.0.0:5000"
+      "applicationUrl": "http://0.0.0.0:80"
     },
 
     "ticket_management-test": {

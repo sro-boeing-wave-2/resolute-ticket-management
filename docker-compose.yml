@@ -4,7 +4,7 @@ services:
         container_name: Ticket-Management
         build: ticket-management/
         environment: 
-            SERVICE_NAME: auth    
+            SERVICE_NAME: Ticket-Management    
         depends_on:
             - db
     db:

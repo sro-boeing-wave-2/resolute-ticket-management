@@ -3,6 +3,6 @@ COPY . /app
 WORKDIR /app
 RUN ["dotnet", "restore"]
 RUN ["dotnet", "build"]
-EXPOSE 5000
+EXPOSE 80
 RUN chmod +x docker_entrypoint.sh
 CMD /bin/bash docker_entrypoint.sh
