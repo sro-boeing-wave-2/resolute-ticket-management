@@ -96,7 +96,7 @@ namespace ticket_management.Services
         }
 
 
-        public async Task<TicketDetailsDto> GetById(long id)
+        public async Task<TicketDetailsDto> GetById(long id, string email, string name)
         {
             Ticket CompleteTicketDetails = await _context.Ticket
                                                 .Include(x => x.Comment)
@@ -108,7 +108,7 @@ namespace ticket_management.Services
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, url);
             requestMessage.Headers.Add("Access", "Allow_Service");
             var response = await httpclient.SendAsync(requestMessage);            
-            var result = await response.Content.ReadAsStringAsync();
+            var result = await response.Content.ReadAsStringAsync();            
             Console.WriteLine("Passed call from api");
             OnboardingUser.EndUser responsejson = JsonConvert.DeserializeObject<OnboardingUser.EndUser>(result);
             Console.WriteLine("deserialoze");
@@ -123,6 +123,8 @@ namespace ticket_management.Services
             Ticket.Description = CompleteTicketDetails.Description;
             Ticket.Comment = CompleteTicketDetails.Comment;
             Ticket.Connectionid = CompleteTicketDetails.Connectionid;
+            Ticket.Email = email;
+            Ticket.Agentname = name;
             return Ticket;
         }
 

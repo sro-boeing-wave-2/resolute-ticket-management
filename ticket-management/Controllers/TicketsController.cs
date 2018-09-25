@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -44,7 +44,7 @@ namespace ticket_management.Controllers
         
 
         [Route("detail/{id}")]
-        public async Task<IActionResult> GetTicketById([FromRoute] int id)
+        public async Task<IActionResult> GetTicketById([FromRoute] int id, [FromHeader] string email, [FromHeader] string name)
         {
 
             if (!ModelState.IsValid)
@@ -52,7 +52,7 @@ namespace ticket_management.Controllers
                 return BadRequest(ModelState);
             }
 
-            TicketDetailsDto ticket = await _ticketService.GetById(id);
+            TicketDetailsDto ticket = await _ticketService.GetById(id, email, name);
 
             if (ticket == null)
             {

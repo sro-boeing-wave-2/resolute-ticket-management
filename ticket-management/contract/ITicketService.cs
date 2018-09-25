@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,7 +9,7 @@ namespace ticket_management.contract
     public interface ITicketService
     {
         Task<Ticket> CreateTicket(ChatDto chat);
-        Task<TicketDetailsDto> GetById(long id);
+        Task<TicketDetailsDto> GetById(long id, string email, string name);
         IEnumerable<Ticket> GetByStatus(string status, long agentId, long departmentid);
         Task<TicketCount> GetCount(long agentId, long departmentid);
         IEnumerable<Ticket> GetTickets(long departmentid);
