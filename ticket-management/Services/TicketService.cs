@@ -74,7 +74,7 @@ namespace ticket_management.Services
 
                 string url = "http://35.221.125.153/agents/leaderboard?id=" + +agentTickets.Key; 
 
-                HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, url);
+                HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, url);
 
                 requestMessage.Headers.Add("Access", "Allow_Service");
 
@@ -101,20 +101,13 @@ namespace ticket_management.Services
             Ticket CompleteTicketDetails = await _context.Ticket
                                                 .Include(x => x.Comment)
                                                 .SingleOrDefaultAsync(x => x.TicketId == id);
-
             HttpClient httpclient = new HttpClient();
-
             string url = "http://35.221.125.153/endusers/" + CompleteTicketDetails.Userid;
-
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, url);
-
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, url);
             requestMessage.Headers.Add("Access", "Allow_Service");
-
-            var response = await httpclient.SendAsync(requestMessage);
-            
+            var response = await httpclient.SendAsync(requestMessage);            
             var result = await response.Content.ReadAsStringAsync();
             OnboardingUser.EndUser responsejson = JsonConvert.DeserializeObject<OnboardingUser.EndUser>(result);
-
             var userName = await response.Content.ReadAsStringAsync();
             TicketDetailsDto Ticket = new TicketDetailsDto();
             Ticket.Id = CompleteTicketDetails.TicketId;
@@ -153,7 +146,7 @@ namespace ticket_management.Services
         {
             //HttpClient httpclient = new HttpClient();
             //string url = "http://35.221.125.153/endusers/query?email=" + chat.Customerhandle;
-            //HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, url);
+            //HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, url);
             //requestMessage.Headers.Add("Access", "Allow_Service");
             //var response = await httpclient.SendAsync(requestMessage);
             //var result = await response.Content.ReadAsStringAsync();
