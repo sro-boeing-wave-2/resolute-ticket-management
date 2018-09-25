@@ -101,13 +101,18 @@ namespace ticket_management.Services
             Ticket CompleteTicketDetails = await _context.Ticket
                                                 .Include(x => x.Comment)
                                                 .SingleOrDefaultAsync(x => x.TicketId == id);
+            Console.WriteLine("Passed ticket fetch");
+            Console.WriteLine(CompleteTicketDetails.Userid);
             HttpClient httpclient = new HttpClient();
-            string url = "http://35.221.125.153/endusers/" + CompleteTicketDetails.Userid;
+
+            string url = "http://localhost/endusers/" + CompleteTicketDetails.Userid;
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, url);
             requestMessage.Headers.Add("Access", "Allow_Service");
             var response = await httpclient.SendAsync(requestMessage);            
             var result = await response.Content.ReadAsStringAsync();
+            Console.WriteLine("Passed call from api");
             OnboardingUser.EndUser responsejson = JsonConvert.DeserializeObject<OnboardingUser.EndUser>(result);
+            Console.WriteLine("deserialoze");
             var userName = await response.Content.ReadAsStringAsync();
             TicketDetailsDto Ticket = new TicketDetailsDto();
             Ticket.Id = CompleteTicketDetails.TicketId;
