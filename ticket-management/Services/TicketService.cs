@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using ticket_management.Models;
 using System;
 using System.Collections.Generic;
@@ -65,14 +65,21 @@ namespace ticket_management.Services
 
         public async Task<List<TopAgentsDto>> GetTopAgents()
         {
-            HttpClient httpclient = new HttpClient();
+            
             var listOfAgents = _context.Ticket.Where(x => x.Status == Status.close)
                 .GroupBy(x => x.Agentid).OrderByDescending(x => x.Count()).Take(3).ToList();
             List<TopAgentsDto> agentsList = new List<TopAgentsDto>(); foreach (var agentTickets in listOfAgents)
             {
-                string url = "http://35.221.125.153:8082/api/agents/leaderboard?id="
-        + agentTickets.Key;
-                var response = await httpclient.GetAsync(url);
+                HttpClient httpclient = new HttpClient();
+
+                string url = "http://35.221.125.153/agents/leaderboard?id=" + +agentTickets.Key; 
+
+                HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, url);
+
+                requestMessage.Headers.Add("Access", "Allow_Service");
+
+                var response = await httpclient.SendAsync(requestMessage);
+                
                 var result = await response.Content.ReadAsStringAsync();
                 TopAgentsDto responsejson = JsonConvert
                     .DeserializeObject<TopAgentsDto>(result);
@@ -94,9 +101,17 @@ namespace ticket_management.Services
             Ticket CompleteTicketDetails = await _context.Ticket
                                                 .Include(x => x.Comment)
                                                 .SingleOrDefaultAsync(x => x.TicketId == id);
+
             HttpClient httpclient = new HttpClient();
-            string url = "http://35.221.125.153:8082/api/endusers/" + CompleteTicketDetails.Userid;
-            var response = await httpclient.GetAsync(url);
+
+            string url = "http://35.221.125.153/endusers/" + CompleteTicketDetails.Userid;
+
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, url);
+
+            requestMessage.Headers.Add("Access", "Allow_Service");
+
+            var response = await httpclient.SendAsync(requestMessage);
+            
             var result = await response.Content.ReadAsStringAsync();
             OnboardingUser.EndUser responsejson = JsonConvert.DeserializeObject<OnboardingUser.EndUser>(result);
 
@@ -137,8 +152,10 @@ namespace ticket_management.Services
         public async Task<Ticket> CreateTicket(ChatDto chat)
         {
             //HttpClient httpclient = new HttpClient();
-            //string url = "http://172.23.238.225:5002/api/endusers/query?email=" + chat.Customerhandle;
-            //var response = await httpclient.GetAsync(url);
+            //string url = "http://35.221.125.153/endusers/query?email=" + chat.Customerhandle;
+            //HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, url);
+            //requestMessage.Headers.Add("Access", "Allow_Service");
+            //var response = await httpclient.SendAsync(requestMessage);
             //var result = await response.Content.ReadAsStringAsync();
             //OnboardingUser.User responsejson = JsonConvert.DeserializeObject<OnboardingUser.User>(result);
 
