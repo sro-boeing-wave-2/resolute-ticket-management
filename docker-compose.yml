@@ -1,9 +1,11 @@
 version: '3'
 services:
   web:
+    container_name: Ticket_Management
     build: ./ticket-management
-    ports:
-      - "8083:80"
+    labels:
+        SERVICE_80_NAME: Ticket_Management
+        SERVICE_TAG: TicketManagement
     depends_on:
       - db
   db:
