@@ -9,8 +9,4 @@ mono: none
 dotnet: 2.1
 script:
   - dotnet restore
-#   - dotnet test ticket_management.test/
-  - chmod +x ./deploy.sh
-after_success:
-  - /bin/bash ./deploy.sh
-
+  - dotnet test ticket_management.test/

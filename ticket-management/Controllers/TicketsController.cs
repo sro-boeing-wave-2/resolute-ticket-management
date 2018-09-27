@@ -1,6 +1,8 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using RabbitMQ.Client;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using ticket_management.Models;
 using ticket_management.contract;
 using static ticket_management.Models.OnboardingUser;
+using Newtonsoft.Json;
 
 namespace ticket_management.Controllers
 {
@@ -16,19 +19,14 @@ namespace ticket_management.Controllers
     public class TicketsController : ControllerBase
     {
         private readonly ITicketService _ticketService;
+        //private readonly IUrlHelper _urlHelper;
 
         public TicketsController(ITicketService ticketService)
         {
+            //_urlHelper = urlHelper;
             _ticketService = ticketService;
         }
-
-        // GET: api/Tickets
-        [HttpGet]
-        public IEnumerable<Ticket> GetAllTicket([FromHeader] long departmentid)
-        {
-            return _ticketService.GetTickets(departmentid);
-        }
-
+      
         [Route("leaderboard")]
         public async Task<IActionResult> GetTopAgents()
         {
@@ -36,23 +34,18 @@ namespace ticket_management.Controllers
             return Ok(topAgents);
         }
 
-        [HttpGet("Analytics")]
-        public async Task<AnalyticsUIDto> GetAnalytics([FromHeader] long agentid, [FromHeader] long departmentid)
-        {
-            return await _ticketService.GetAnalytics(agentid, departmentid);
-        }
-        
+
 
         [Route("detail/{id}")]
-        public async Task<IActionResult> GetTicketById([FromRoute] int id, [FromHeader] string email, [FromHeader] string name)
+        public async Task<IActionResult> GetTicketById([FromRoute] string id)
         {
-
+            
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            TicketDetailsDto ticket = await _ticketService.GetById(id, email, name);
+            Ticket ticket = await _ticketService.GetById(id);
 
             if (ticket == null)
             {
@@ -62,86 +55,82 @@ namespace ticket_management.Controllers
             return Ok(ticket);
         }
 
+
         //for user
         [Route("count")]
-        public async Task<TicketCount> CountTickets([FromHeader] int agentId, [FromHeader] int departmentid)
+        public async Task<TicketCount> CountTickets([FromQuery] string agentEmailId)
         {
-            return await _ticketService.GetCount(agentId, departmentid);
+            return await _ticketService.GetCount(agentEmailId);
+    
         }
 
-
-
-        [Route("status/{status}")]
-        public IEnumerable<Ticket> GetTicketByStatus([FromRoute] string status, [FromHeader] int agentId, [FromHeader] int departmentid)
-        {
-            return _ticketService.GetByStatus(status, agentId, departmentid);
-        }
+        
 
         [Route("filter")]
-        public IEnumerable<Ticket> filterTickets([FromQuery] int agentid,
-            [FromQuery] int departmentid,
-            [FromQuery] int userid,
-            [FromQuery] int customerid,
-            [FromQuery] string source,
+        public IActionResult GetSortedTickets([FromHeader] string agentEmailId,
+            [FromQuery] string userEmailId,
             [FromQuery] string priority,
             [FromQuery] string status,
-            [FromQuery] int page,
-            [FromQuery] int pagesize)
+            [FromQuery] int pageNumber,
+            [FromQuery] int pageSize)
         {
-            return _ticketService.Filter(agentid, departmentid, userid, customerid,
-               source, priority, status, page, pagesize);
+            var model = _ticketService.GetTickets(agentEmailId, userEmailId, priority, status, pageNumber, pageSize);
+            TicketOutputModel outputModel = new TicketOutputModel
+            {
+                Pages = model.TotalPages,
+                HasNext = model.HasNextPage,
+                HasPrevious = model.HasPreviousPage,
+                Tickets = model.List
+            };
+
+            return Ok(outputModel);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateTicket([FromBody] ChatDto chat)
+        [HttpGet("Analytics")]
+        public async Task<AnalyticsUIDto> GetAnalytics([FromHeader] string agentEmail)
+        {
+            return await _ticketService.GetAnalytics(agentEmail);
+        }
+
+        [HttpGet()]
+        public IEnumerable<Ticket> Gettickets()
+        {
+            return  _ticketService.getTickets();
+        }
+
+
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateTicket([FromQuery] string query, [FromQuery] string userEmail)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            Ticket ticket = await _ticketService.CreateTicket(chat);
+            Ticket ticket = await _ticketService.CreateTicket( query, userEmail); ;
             return Ok(ticket);
         }
-     
 
+        [HttpGet("Assignagent/{id}")]
+        public async Task<IActionResult> assignAgent([FromRoute] string id) {
+            string Email = await _ticketService.AssignEmail(id);
+            return Ok(Email);
+        } 
         [HttpGet("analytics/update")]
-        public async Task<IActionResult> createAnalysis1()
+        public async Task<IActionResult> CreateAnalysis()
         {
-            Analytics analyticsdata = await _ticketService.UpdateAnalytics();
+            Analytics analyticsdata = await _ticketService.PushAnalytics();
             return Ok(analyticsdata);
 
         }
 
-        [HttpPut("updatecomment")]
-        public async Task<IActionResult> UpdateTicketComment([FromBody] CommentDto comment)
-        {
-            await _ticketService.UpdateTicketComment(comment);
-            return Ok(comment);
-        }
         // PUT: api/Tickets/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> EditTicket([FromRoute] int id, [FromBody] Ticket ticket)
+        public async Task<IActionResult> EditTicket([FromRoute]string id, [FromQuery] string status, [FromQuery] string priority, [FromQuery] string intent, [FromQuery] int feedbackscore, [FromQuery] string agentemailid)
         {
-            await _ticketService.EditTicket(ticket);
-            return Ok(ticket);
+            await _ticketService.EditTicket(id, status, priority, intent, feedbackscore, agentemailid);
+            return Ok();
         }
-
-        [HttpPut("status")]
-        public async Task<IActionResult> EditTicketByStatus([FromBody] StatusDto ticket) {
-            await _ticketService.EditTicketByStatus(ticket);
-            return Ok(ticket);
-        }
-        [HttpPut("priority")]
-        public async Task<IActionResult> EditTicketByPriority([FromBody] PriorityDto priority)
-        {
-            await _ticketService.EditTicketByPriority(priority);
-            return Ok(priority);
-        }
-
-        IList<Ticket> GetPage(IList<Ticket> list, int page, int pageSize)
-        {
-            return list.Skip(page * pageSize).Take(pageSize).ToList();
-        }
+       
     }
 }

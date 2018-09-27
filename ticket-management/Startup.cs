@@ -1,13 +1,21 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using ticket_management.Models;
 using ticket_management.contract;
 using ticket_management.Services;
-
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace ticket_management
 {
@@ -15,7 +23,6 @@ namespace ticket_management
     {
         public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
-           
             Configuration = configuration;
             _env = env;
         }
@@ -28,18 +35,33 @@ namespace ticket_management
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            if (_env.EnvironmentName == "Testing")
+            services.Configure<Settings>(options =>
             {
-                services.AddDbContext<TicketContext>(Options =>
-                Options.UseInMemoryDatabase("TestDb"));
+                options.ConnectionString
+                    = Configuration.GetSection("MongoConnection:ConnectionString").Value;
+                options.Database
+                    = Configuration.GetSection("MongoConnection:Database").Value;
+            });
 
-            }
-            
-            
-                services.AddDbContext<TicketContext>(options =>
-                     options.UseSqlServer(Configuration.GetConnectionString("TicketContext")));
+            //if (_env.EnvironmentName == "Testing")
+            //{
+            //    services.AddDbContext<TicketContext>(Options =>
+            //    Options.UseInMemoryDatabase("TestDb"));
 
-            services.AddScoped<ITicketService, TicketService>();
+            //}
+
+
+            //services.AddDbContext<TicketContext>(options =>
+            //     options.UseSqlServer(Configuration.GetConnectionString("TicketContext")));
+
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+            //services.AddScoped<IUrlHelper>(factory =>
+            //{
+            //    var actionContext = factory.GetService<IActionContextAccessor>()
+            //                               .ActionContext;
+            //    return new UrlHelper(actionContext);
+            //});
+            services.AddSingleton<ITicketService, TicketService>();
 
             services.AddCors(
                 options => options.AddPolicy("allowaccess",
@@ -50,7 +72,7 @@ namespace ticket_management
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, TicketContext context)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -60,8 +82,11 @@ namespace ticket_management
             {
                 app.UseHsts();
             }
-            context.Database.Migrate();
+
+            //context.Database.Migrate();
             app.UseCors("allowaccess");
+            app.UseDeveloperExceptionPage();
+            app.UseMvcWithDefaultRoute();
             app.UseHttpsRedirection();
             app.UseMvc();
         }

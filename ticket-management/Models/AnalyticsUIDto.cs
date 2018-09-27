@@ -7,28 +7,26 @@ namespace ticket_management.Models
 {
     public class AnalyticsUIDto
     {
-        List<AnalyticsCountDto> analyticscount;
-        List<AnalyticsCsatDto> analyticscsat;
-        string avgresolutiontime;
+        public List<AnalyticsCountDto> Analyticscount { get ; set ; }
 
-        public List<AnalyticsCountDto> Analyticscount { get => analyticscount; set => analyticscount = value; }       
-        public string Avgresolutiontime { get => avgresolutiontime; set => avgresolutiontime = value; }
-        public List<AnalyticsCsatDto> Analyticscsat { get => analyticscsat; set => analyticscsat = value; }
+        public List<AvgResolutionTime> Avgresolutiontime { get ; set ; }
+ public List<AnalyticsCsatDto> Analyticscsat { get ; set ; }
     }
     public class AnalyticsCsatDto
     {
-        DateTime date;
-        double csatscore;
-
-        public DateTime Date { get => date; set => date = value; }
-        public double Csatscore { get => csatscore; set => csatscore = value; }
+        public DateTime Date { get ; set ; }
+        public double Csatscore { get ; set ; }
     }
     public class AnalyticsCountDto
     {
-        string tickettype;
-        long count;
+        public string Tickettype { get ; set ; }
+        public long Count { get ; set ; }
+    }
 
-        public string Tickettype { get => tickettype; set => tickettype = value; }
-        public long Count { get => count; set => count = value; }
+    public class AvgResolutionTime
+    {
+        public string intent { get; set; }
+        public double avgresolutiontime { get; set; }
+
     }
 }

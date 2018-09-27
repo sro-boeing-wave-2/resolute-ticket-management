@@ -7,12 +7,9 @@ namespace ticket_management.Models
 {
     public class TopAgentsDto
     {
-        string name;
-        string profileImageUrl;
-        string departmentName;
-        int numberOfTicketsResolved; public int NumberOfTicketsResolved { get => numberOfTicketsResolved; set => numberOfTicketsResolved = value; }
-        public string Name { get => name; set => name = value; }
-        public string ProfileImageUrl { get => profileImageUrl; set => profileImageUrl = value; }
-        public string DepartmentName { get => departmentName; set => departmentName = value; }
+        public int NumberOfTicketsResolved { get; set ; }
+        public string Name { get; set ; }
+        public string ProfileImageUrl { get ; set ; }
+        public string DepartmentName { get; set ; }
     }
 }

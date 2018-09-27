@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,19 +8,16 @@ namespace ticket_management.contract
 {
     public interface ITicketService
     {
-        Task<Ticket> CreateTicket(ChatDto chat);
-        Task<TicketDetailsDto> GetById(long id, string email, string name);
-        IEnumerable<Ticket> GetByStatus(string status, long agentId, long departmentid);
-        Task<TicketCount> GetCount(long agentId, long departmentid);
-        IEnumerable<Ticket> GetTickets(long departmentid);
-        Task<AnalyticsUIDto> GetAnalytics(long agentid, long departmentid);
-        Task<Analytics> UpdateAnalytics();        
-        Task EditTicket(Ticket ticket);
-        Task EditTicketByStatus(StatusDto ticket);
-        Task EditTicketByPriority(PriorityDto ticket);
-        Task UpdateTicketComment(CommentDto comment);
-        IEnumerable<Ticket> Filter(long agentid, long departmentid, long userid, long customerid,
-                string source, string priority, string status, int pageno, int size);
+        Task<Ticket> CreateTicket(string query, string userEmail);
+        Task EditTicket(string ticketid, string status, string priority, string intent, int feedbackscore, string agentemailid);
+        Task<AnalyticsUIDto> GetAnalytics(string agentEmail);
+        Task<Ticket> GetById(string id);
+        Task<TicketCount> GetCount(string agentEmailId);
+        PagedList<Ticket> GetTickets(string agentEmailId, string userEmailId, string priority, string status, int pageno, int size);
         Task<List<TopAgentsDto>> GetTopAgents();
+        Task<Analytics> PushAnalytics();
+        Task GetAgents();
+        Task<string> AssignEmail(string id);
+        IEnumerable<Ticket> getTickets();
     }
 }
