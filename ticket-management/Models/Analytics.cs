@@ -3,22 +3,26 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Driver;
 
 namespace ticket_management.Models
 {
     public class Analytics
     {
-        int id;
-        DateTime date;
-        int customerid;
-        double csatscore;
-        string avgresolutiontime;
+        [BsonElement("Id")]
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get ; set; }
+        [BsonElement("Date")]
+        public DateTime Date { get; set ; }
 
-        [Key]
-        public int Id { get => id; set => id = value; }
-        public DateTime Date { get => date; set => date = value; }
-        public string Avgresolutiontime { get => avgresolutiontime; set => avgresolutiontime = value; }
-        public double Csatscore { get => csatscore; set => csatscore = value; }
-        public int Customerid { get => customerid; set => customerid = value; }
+        [BsonElement("AvgResolutionTime")]
+        public List<AvgResolutionTime> Avgresolutiontime { get ; set ; } 
+        [BsonElement("Csatscore")]
+        public double Csatscore { get ; set ; }
+        [BsonElement("Customerid")]
+        public int Customerid { get ; set ; }
     }
 }

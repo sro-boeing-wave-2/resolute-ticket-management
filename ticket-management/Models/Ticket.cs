@@ -3,53 +3,43 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Driver;
 
 namespace ticket_management.Models
 {
-    public enum Status
-{
-    open, close, due
-}
+    
     public class Ticket
-{
-    long ticketId;
-    string subject;
-    string description;
-    long agentid;
-    long departmentid;
-    string source;
-    string priority;
-    Status status;
-    long sla;
-    List<Comments> comment;
-    DateTime createdOn;
-    long createdBy;
-    DateTime updatedOn;
-    long userid;
-    long customerid;
-    long updatedBy;
-    string connectionid;
-    int feedbackscore;
-
-    [Key]
-    public long TicketId { get => ticketId; set => ticketId = value; }
-    public string Subject { get => subject; set => subject = value; }
-    public string Description { get => description; set => description = value; }
-    public string Source { get => source; set => source = value; }
-    public string Priority { get => priority; set => priority = value; }
-    public Status Status { get => status; set => status = value; }
-    public long Sla { get => sla; set => sla = value; }
-    public List<Comments> Comment { get => comment; set => comment = value; }
-    public DateTime CreatedOn { get => createdOn; set => createdOn = value; }
-    public long CreatedBy { get => createdBy; set => createdBy = value; }
-    public DateTime UpdatedOn { get => updatedOn; set => updatedOn = value; }
-    public long UpdatedBy { get => updatedBy; set => updatedBy = value; }
-    public long Agentid { get => agentid; set => agentid = value; }
-    public long Departmentid { get => departmentid; set => departmentid = value; }
-    public long Userid { get => userid; set => userid = value; }
-    public long Customerid { get => customerid; set => customerid = value; }
-    public string Connectionid { get => connectionid; set => connectionid = value; }
-    public int Feedbackscore { get => feedbackscore; set => feedbackscore = value; }
+    {
+        [BsonElement("TicketId")]
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string TicketId { get; set; }
+        [BsonElement("Intent")]
+        public string Intent { get ; set ; }
+        [BsonElement("Description")]
+        public string Description { get ; set ; }
+        [BsonElement("AgentEmailid")]
+        public string AgentEmailid { get ; set ; }
+        [BsonElement("Priority")]
+        public string Priority { get; set; }
+        [BsonElement("Status")]
+        public string Status { get ; set ; }
+        [BsonElement("CreatedOn")]
+        public DateTime CreatedOn { get; set; }
+        [BsonElement("UpdatedOn")]
+        public DateTime? UpdatedOn { get; set; }
+        [BsonElement("UserEmailId")]
+        public string UserEmailId { get; set ; }
+        [BsonElement("UpdatedBy")]
+        public string UpdatedBy { get ; set ; }
+        [BsonElement("Closedon")]
+        public DateTime? Closedon { get; set ; }
+        [BsonElement("Closedby")]
+        public string Closedby { get ; set ; }
+        [BsonElement("Feedbackscore")]
+        public int? Feedbackscore { get; set; }
     }
 
 }
