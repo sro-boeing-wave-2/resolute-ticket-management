@@ -1,10 +1,10 @@
 version: '3'
 services:
   web:
-    container_name: Ticket_Management
+    container_name: Ticket-Management
     build: ./ticket-management
     labels:
-        SERVICE_80_NAME: Ticket_Management
+        SERVICE_80_NAME: Ticket-Management
         SERVICE_TAG: TicketManagement
     depends_on:
       - db
