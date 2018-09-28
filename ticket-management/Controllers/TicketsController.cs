@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using RabbitMQ.Client;
@@ -100,14 +100,14 @@ namespace ticket_management.Controllers
 
 
         [HttpPost("create")]
-        public async Task<IActionResult> CreateTicket([FromQuery] string query, [FromQuery] string userEmail)
+        public async Task<IActionResult> CreateTicket([FromBody] ChatDto chat)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            Ticket ticket = await _ticketService.CreateTicket( query, userEmail); ;
+            Ticket ticket = await _ticketService.CreateTicket(chat); ;
             return Ok(ticket);
         }
 

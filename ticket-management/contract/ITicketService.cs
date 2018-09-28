@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,7 +8,7 @@ namespace ticket_management.contract
 {
     public interface ITicketService
     {
-        Task<Ticket> CreateTicket(string query, string userEmail);
+        Task<Ticket> CreateTicket(ChatDto chat);
         Task EditTicket(string ticketid, string status, string priority, string intent, int feedbackscore, string agentemailid);
         Task<AnalyticsUIDto> GetAnalytics(string agentEmail);
         Task<Ticket> GetById(string id);

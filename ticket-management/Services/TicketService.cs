@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using ticket_management.Models;
 using System;
 using System.Collections.Generic;
@@ -102,7 +102,7 @@ namespace ticket_management.Services
         }
 
         //done
-        public async Task<Ticket> CreateTicket(string query , string useremail)
+        public async Task<Ticket> CreateTicket(ChatDto chat)
         {
             Ticket ticket = new Ticket
             {
@@ -112,14 +112,14 @@ namespace ticket_management.Services
                 Closedby = null,
                 Closedon = null,
                 CreatedOn = DateTime.Now,
-                Description = query,
+                Description = chat.Query,
                 Intent = null,
                 Feedbackscore = null,
                 Priority = "Low",
                 Status = "open",
                 UpdatedBy = null,
                 UpdatedOn = null,
-                UserEmailId = useremail
+                UserEmailId = chat.Useremail
             };
 
             //_context.Ticket.Add(ticket);
