@@ -28,9 +28,9 @@ namespace ticket_management.Controllers
         }
       
         [Route("leaderboard")]
-        public async Task<IActionResult> GetTopAgents()
+        public IActionResult GetTopAgents()
         {
-            var topAgents = await _ticketService.GetTopAgents();
+            var topAgents =  _ticketService.GetTopAgents();
             return Ok(topAgents);
         }
 

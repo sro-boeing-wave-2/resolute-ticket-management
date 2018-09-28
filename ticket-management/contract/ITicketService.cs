@@ -14,7 +14,7 @@ namespace ticket_management.contract
         Task<Ticket> GetById(string id);
         Task<TicketCount> GetCount(string agentEmailId);
         PagedList<Ticket> GetTickets(string agentEmailId, string userEmailId, string priority, string status, int pageno, int size);
-        Task<List<TopAgentsDto>> GetTopAgents();
+        List<TopAgentsDto> GetTopAgents();
         Task<Analytics> PushAnalytics();
         Task GetAgents();
         Task<string> AssignEmail(string id);

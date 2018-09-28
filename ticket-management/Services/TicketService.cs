@@ -274,32 +274,19 @@ namespace ticket_management.Services
         }
         
         //done
-        public async Task<List<TopAgentsDto>> GetTopAgents()
+        public List<TopAgentsDto> GetTopAgents()
         {
-            HttpClient httpclient = new HttpClient();
             var listOfAgents = _context.TicketCollection.AsQueryable().Where(x => x.Status == "close")
-                .GroupBy(x => x.AgentEmailid).OrderByDescending(x => x.Count()).Take(3).ToList();
-            List<TopAgentsDto> agentsList = new List<TopAgentsDto>();
-            
-            foreach(var agentTickets in listOfAgents)
+              .GroupBy(x => x.AgentEmailid).OrderByDescending(x => x.Count()); List<TopAgentsDto> agentsList = new List<TopAgentsDto>(); foreach (var agentTickets in listOfAgents)
             {
-                
-                string url = "http://35.221.125.153:8082/api/agents/leaderboard?id="
-                    + agentTickets.Key;
-                var response = await httpclient.GetAsync(url);
-                var result = await response.Content.ReadAsStringAsync();
-                TopAgentsDto responsejson = JsonConvert
-                    .DeserializeObject<TopAgentsDto>(result);
-                TopAgentsDto agent = new TopAgentsDto
+                var agent = _context.AgentsCollection.AsQueryable().Where(x => x.Email == agentTickets.Key).ToList()[0]; TopAgentsDto agentDto = new TopAgentsDto
                 {
-                    NumberOfTicketsResolved = agentTickets.Count(),
-                    Name = responsejson.Name,
-                    DepartmentName = responsejson.DepartmentName,
-                    ProfileImageUrl = responsejson.ProfileImageUrl
+                    NumberOfTicketsResolved = listOfAgents.Count(),
+                    Name = agent.Name,
+                    ProfileImageUrl = agent.ProfileImgUrl
                 };
-                agentsList.Add(agent);
+                agentsList.Add(agentDto);
             }
-
             return agentsList;
         }
 
