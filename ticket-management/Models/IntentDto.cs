@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,5 +15,10 @@ namespace ticket_management.Models
         public int position { get; set; }
         public int expressions_count { get; set; }
         public int suggestions_count { get; set; }
+    }
+    public class Intent
+    {
+        public List<IntentDto> results { get; set; }
+        public string message { get; set; }
     }
 }

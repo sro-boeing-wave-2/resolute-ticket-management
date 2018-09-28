@@ -231,7 +231,7 @@ namespace ticket_management.Services
 
             totalticketcount = _context.TicketCollection.AsQueryable()
                 .Where(x =>
-                x.UpdatedOn.Value.ToString().Split()[0] == date.Date.ToString() &&
+                x.UpdatedOn.Value.ToString().Split()[0] == date.Date.ToString().Split()[0] &&
                 x.Status == "close" &&
                 x.Feedbackscore > 0)
                 .Select(x => x.Feedbackscore).ToList();
@@ -244,14 +244,14 @@ namespace ticket_management.Services
                 csatscore = 0;
             }
             HttpClient http = new HttpClient();
-            string url = "http://localhost:3000/getIntent";
+            string url = "http://35.221.76.107/intent/getIntent";
             var response = await http.GetAsync(url);
             var result = await response.Content.ReadAsStringAsync();
-            List<IntentDto> intents = JsonConvert.DeserializeObject<List<IntentDto>>(result);
+            Intent intents = JsonConvert.DeserializeObject<Intent>(result);
             List<Ticket> listOfTickets = new List<Ticket>();
             List<AvgResolutionTime> avgResolutionTime = new  List<AvgResolutionTime>();
 
-            foreach (IntentDto intent in intents) {
+            foreach (IntentDto intent in intents.results) {
                 TimeSpan totalhours = new TimeSpan();
                 AvgResolutionTime avgresolutiondata = new AvgResolutionTime();
                 listOfTickets = _context.TicketCollection.AsQueryable().Where(x => x.Status == "close" && x.Intent == intent.name).ToList();                
@@ -263,6 +263,7 @@ namespace ticket_management.Services
                 avgresolutiondata.avgresolutiontime = totalhours.Hours;
                 avgResolutionTime.Add(avgresolutiondata);
             }
+
             csatscore = (double)ticketscore.Sum() / totalticketcount.Count();
             Analytics scheduledData = new Analytics
             {
