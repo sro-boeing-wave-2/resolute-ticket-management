@@ -186,7 +186,7 @@ namespace ticket_management.Services
                         .Set(x => x.Status, status ?? ticket.Status)
                         .Set(x => x.Priority, priority ?? ticket.Priority)
                         .Set(x => x.Intent, intent ?? ticket.Intent)
-                        .Set(x => x.Feedbackscore, (feedbackscore == 0) ? 0 : ticket.Feedbackscore)
+                        .Set(x => x.Feedbackscore, (feedbackscore == 0) ? ticket.Feedbackscore : feedbackscore)
                         .Set(x => x.Closedon , (status == "close") ? DateTime.Now : ticket.Closedon)
                         .Set(x => x.Closedby, (status == "close") ? agentemailid : ticket.Closedby)
                         .Set(x => x.UpdatedOn, DateTime.Now)
