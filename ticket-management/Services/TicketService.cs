@@ -87,7 +87,8 @@ namespace ticket_management.Services
                 var agentfilter = Builders<Agents>.Filter;
                 long ticketCount = await _context.TicketCollection.CountDocumentsAsync(new BsonDocument()) - await _context.TicketCollection.Find(filterEmail.Eq("AgentEmailid", "bot")).CountDocumentsAsync();
                 long agentCount = _context.AgentsCollection.CountDocuments(new BsonDocument());
-                
+                Console.WriteLine(ticketCount);
+                Console.WriteLine(agentCount);
                 long agentId = (ticketCount + 1) % agentCount;
                 agentEmailId = _context.AgentsCollection.Find(agentfilter.Eq("Id", agentId)).ToList()[0].Email;
             }
