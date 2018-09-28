@@ -71,9 +71,9 @@ namespace ticket_management.Controllers
         }
 
         [HttpGet("Analytics")]
-        public async Task<AnalyticsUIDto> GetAnalytics([FromHeader] string agentEmail)
+        public AnalyticsUIDto GetAnalytics()
         {
-            return await _ticketService.GetAnalytics(agentEmail);
+            return _ticketService.GetAnalytics();
         }
 
         [HttpGet()]

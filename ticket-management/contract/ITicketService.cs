@@ -12,7 +12,7 @@ namespace ticket_management.contract
     {
         Task<Ticket> CreateTicket(ChatDto chat);
         Task EditTicket(string ticketid, string status, string priority, string intent, int feedbackscore, string agentemailid);
-        Task<AnalyticsUIDto> GetAnalytics(string agentEmail);
+        AnalyticsUIDto GetAnalytics();
         Task<Ticket> GetById(string id);
         Task<TicketCount> GetCount(string agentEmailId);
         PagedList<Ticket> GetTickets(string agentEmailId, string userEmailId, string priority, string status, int pageno, int size);

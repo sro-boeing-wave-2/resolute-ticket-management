@@ -166,12 +166,14 @@ namespace ticket_management.Services
 
         }
 
+
         /// <summary>
         /// Returns the Count of tickets resolved, Average Resolution Time and CSAT score
         /// </summary>
         /// <param name="agentemail">The email of the agent who has logged in</param>
         /// <returns>A Dto containing the Analytics Data</returns>
-        public async Task<AnalyticsUIDto> GetAnalytics(string agentemail)
+        public AnalyticsUIDto GetAnalytics()
+
         {
             AnalyticsUIDto Analyticsdata = new AnalyticsUIDto
             {
@@ -185,28 +187,41 @@ namespace ticket_management.Services
                 );
 
             TicketCount count = new TicketCount();
-            Analyticsdata.Analyticscount = new List<AnalyticsCountDto>();
-            Analyticsdata.Analyticscount.AddRange(
-                new List<AnalyticsCountDto> {
+            int closedTickets =  _context.TicketCollection.AsQueryable().Where(x => x.Status == "close").ToList().Count;
+            int openTickets = _context.TicketCollection.AsQueryable().Where(x => x.Status == "open").ToList().Count;
+            int dueTickets = _context.TicketCollection.AsQueryable().Where(x => x.Status == "due").ToList().Count;
+            Analyticsdata.Analyticscount = new List<AnalyticsCountDto>()
+            {
+               
                     new AnalyticsCountDto
                     {
-                        Count = await _context.TicketCollection.AsQueryable().Where(x => x.Status == "close").CountAsync(),
+                        Count = closedTickets,
                         Tickettype = "Closed"
                     },
                     new AnalyticsCountDto
                     {
-                        Count = await _context.TicketCollection.AsQueryable().Where(x => x.Status == "due").CountAsync(),
+                        Count = dueTickets,
                         Tickettype = "Due"
                     },
                     new AnalyticsCountDto
                     {
-                        Count = await _context.TicketCollection.AsQueryable().Where(x => x.Status == "open").CountAsync(),
+                        Count = openTickets,
                         Tickettype = "Open"
                     }
-                }
-            );
+                
+            };
             DateTime date = DateTime.Now;
-            Analyticsdata.Avgresolutiontime = _context.AnalyticsCollection.AsQueryable().Where(x => x.Date.Date == date.Date).Select(x => x.Avgresolutiontime).ToList()[0];
+            List<Analytics> avgResolutionTime = _context.AnalyticsCollection.AsQueryable().ToList();
+            Analyticsdata.Avgresolutiontime = new List<AvgResolutionTime>();
+            foreach (Analytics i in avgResolutionTime)
+            {
+                if (i.Date.Date == date.AddDays(-1).Date)
+                { 
+                    Analyticsdata.Avgresolutiontime.AddRange(i.Avgresolutiontime);
+                    break;
+                }
+            }
+            //Analyticsdata.Avgresolutiontime = _context.AnalyticsCollection.AsQueryable().Where(x => x.Date.Date == date.Date).Select(x => x.Avgresolutiontime).ToList()[0];
             return Analyticsdata;
         }
         
@@ -311,9 +326,12 @@ namespace ticket_management.Services
             catch {
                 csatscore = 0;
             }
+            
             HttpClient http = new HttpClient();
             string url = "http://35.221.76.107/intent/getIntent";
-            var response = await http.GetAsync(url);
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, url);
+            requestMessage.Headers.Add("Access", "Allow_Service");
+            var response = await http.SendAsync(requestMessage);
             var result = await response.Content.ReadAsStringAsync();
             Intent intents = JsonConvert.DeserializeObject<Intent>(result);
             List<Ticket> listOfTickets = new List<Ticket>();
@@ -331,8 +349,6 @@ namespace ticket_management.Services
                 avgresolutiondata.Avgresolutiontime = totalhours.Hours;
                 avgResolutionTime.Add(avgresolutiondata);
             }
-
-            csatscore = (double)ticketscore.Sum() / totalticketcount.Count();
             Analytics scheduledData = new Analytics
             {
                 Date = date.Date,
