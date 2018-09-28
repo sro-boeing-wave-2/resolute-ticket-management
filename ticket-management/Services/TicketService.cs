@@ -222,7 +222,7 @@ namespace ticket_management.Services
 
             ticketscore = _context.TicketCollection.AsQueryable()
                 .Where(x => 
-                x.UpdatedOn.Value.ToString().Split()[0] == date.Date.ToString().Split()[0] &&
+                x.Closedon.Value.ToShortDateString() == date.ToShortDateString() &&
                 x.Status == "close" &&
                 x.Feedbackscore > 3)
                 .Select(x => x.Feedbackscore).ToList();
@@ -231,7 +231,7 @@ namespace ticket_management.Services
 
             totalticketcount = _context.TicketCollection.AsQueryable()
                 .Where(x =>
-                x.UpdatedOn.Value.ToString().Split()[0] == date.Date.ToString().Split()[0] &&
+                x.Closedon.Value.ToShortDateString() == date.ToShortDateString() &&
                 x.Status == "close" &&
                 x.Feedbackscore > 0)
                 .Select(x => x.Feedbackscore).ToList();
