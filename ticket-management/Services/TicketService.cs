@@ -145,8 +145,8 @@ namespace ticket_management.Services
             var filter = Builders<EndUser>.Filter.Eq("Email", chat.UserEmail);
             ticket.UserName = (await _context.EndUsersCollection.Find(filter).FirstOrDefaultAsync()).Name;
             ticket.UserImageUrl = (await _context.EndUsersCollection.Find(filter).FirstOrDefaultAsync()).ProfileImgUrl;
-                        
-             await _context.TicketCollection.InsertOneAsync(ticket);
+            var filterTicket = Builders<Ticket>.Filter.Eq("UserEmailId", chat.UserEmail);
+            await _context.TicketCollection.InsertOneAsync(ticket);
 
             var factory = new ConnectionFactory() { HostName = "35.221.76.107" };
             using (var connection = factory.CreateConnection())
@@ -155,7 +155,7 @@ namespace ticket_management.Services
                 var model = connection.CreateModel();
                 var properties = model.CreateBasicProperties();
                 properties.Persistent = true;
-                String jsonified = JsonConvert.SerializeObject(await _context.TicketCollection.AsQueryable().FirstOrDefaultAsync(x => x.AgentEmailid == ticket.AgentEmailid));
+                String jsonified = JsonConvert.SerializeObject(await _context.TicketCollection.Find(filterTicket).FirstOrDefaultAsync());
                 var body = Encoding.UTF8.GetBytes(jsonified);
                 model.BasicPublish("ticket-notification", "ticket-notification", properties, body);
                 Console.WriteLine("Message Sent");
@@ -251,7 +251,7 @@ namespace ticket_management.Services
                         .Set(x=> x.UpdatedBy , ticket.AgentEmailid);           
             
             _context.TicketCollection.UpdateOne(filter, update);
-
+            var filterTicket = Builders<Ticket>.Filter.Eq("AgentEmailId", ticket.AgentEmailid);
             var factory = new ConnectionFactory() { HostName = "35.221.76.107" };
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
@@ -259,7 +259,7 @@ namespace ticket_management.Services
                 var model = connection.CreateModel();
                 var properties = model.CreateBasicProperties();
                 properties.Persistent = true;
-                String jsonified = JsonConvert.SerializeObject(await _context.TicketCollection.AsQueryable().FirstOrDefaultAsync(x => x.AgentEmailid == ticket.AgentEmailid));
+                String jsonified = JsonConvert.SerializeObject(await _context.TicketCollection.Find(filterTicket).FirstOrDefaultAsync());
                 var body = Encoding.UTF8.GetBytes(jsonified);
                 model.BasicPublish("ticket-notification", "tasks", properties, body);
                 Console.WriteLine("Message Sent");
