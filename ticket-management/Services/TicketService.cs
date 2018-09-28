@@ -188,9 +188,9 @@ namespace ticket_management.Services
                         .Set(x => x.Intent, intent ?? ticket.Intent)
                         .Set(x => x.Feedbackscore, (feedbackscore == 0) ? ticket.Feedbackscore : feedbackscore)
                         .Set(x => x.Closedon , (status == "close") ? DateTime.Now : ticket.Closedon)
-                        .Set(x => x.Closedby, (status == "close") ? agentemailid : ticket.Closedby)
+                        .Set(x => x.Closedby, (status == "close") ? ticket.AgentEmailid : ticket.Closedby)
                         .Set(x => x.UpdatedOn, DateTime.Now)
-                        .Set(x=> x.UpdatedBy , agentemailid);           
+                        .Set(x=> x.UpdatedBy , ticket.AgentEmailid);           
             
             _context.TicketCollection.UpdateOne(filter, update);
 
