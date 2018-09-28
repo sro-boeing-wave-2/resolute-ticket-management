@@ -1,8 +1,10 @@
-using System;
+#region MS Directives
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+#endregion
+#region Custom Directives
 using ticket_management.Models;
+#endregion
 
 namespace ticket_management.contract
 {
@@ -18,6 +20,6 @@ namespace ticket_management.contract
         Task<Analytics> PushAnalytics();
         Task GetAgents();
         Task<string> AssignEmail(string id);
-        IEnumerable<Ticket> getTickets();
+        IEnumerable<Ticket> GetTickets();
     }
 }

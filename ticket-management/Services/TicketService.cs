@@ -1,18 +1,23 @@
-using Microsoft.EntityFrameworkCore;
-using ticket_management.Models;
+#region MS Directives
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ticket_management.contract;
-using RabbitMQ.Client;
 using System.Net.Http;
-using Newtonsoft.Json;
 using System.Text;
 using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
+#endregion
+#region Third Party Libraries
+using Newtonsoft.Json;
 using MongoDB.Driver;
 using MongoDB.Bson;
-
+using RabbitMQ.Client;
+#endregion
+#region Custom Directives
+using ticket_management.contract;
+using ticket_management.Models;
+#endregion
 namespace ticket_management.Services
 {
     public class TicketService : ITicketService
@@ -26,13 +31,22 @@ namespace ticket_management.Services
             GetEndUsers().Wait();
 
         }
-
-        public IEnumerable<Ticket> getTickets()
+     
+        /// <summary>
+        /// Retrieves all the Tickets present
+        /// </summary>
+        /// <returns>List of Tickets
+        /// </returns>
+        public IEnumerable<Ticket> GetTickets()
         {
             return _context.TicketCollection.AsQueryable().ToList();
         }
 
-        //done
+        /// <summary>
+        /// To retrieve a Ticket by the Id of the Ticket
+        /// </summary>
+        /// <param name="id">The Id of the Ticket required</param>
+        /// <returns>Ticket</returns>
         public async Task<Ticket> GetById(string id)
         {
             //Ticket CompleteTicketDetails = await _context.Ticket
@@ -57,29 +71,31 @@ namespace ticket_management.Services
 
         }
 
-        //done
+        /// <summary>
+        /// Returns all the count of all the open,closed,due and total tickets 
+        /// </summary>
+        /// <param name="agentemailid">The email Id of an agent</param>
+        /// <returns>TicketCount Dto which contains counts of different categories </returns>
         public async Task<TicketCount> GetCount(string agentemailid)
         {
-            //string AgentEmailid
-
             var filter = Builders<Ticket>.Filter;
-
-
-            var ticket = new TicketCount();
-
-            //Open = await _context.Ticket.Where(x => (x.Status == Status.open&&x.Agentid==agentId&&x.Departmentid== departmentid)).CountAsync(),
-            //Closed = await _context.Ticket.Where(x => (x.Status == Status.close && x.Agentid == agentId && x.Departmentid == departmentid)).CountAsync(),
-            //Due = await _context.Ticket.Where(x => (x.Status == Status.due && x.Departmentid == departmentid)).CountAsync(),
-            //Total = await _context.Ticket.Where(x=> (x.Departmentid == departmentid)).CountAsync()
-            ticket.Open = _context.TicketCollection.AsQueryable().Where(x => x.AgentEmailid == agentemailid && x.Status == "open").ToList().Count;
-            ticket.Closed = _context.TicketCollection.AsQueryable().Where(x => x.AgentEmailid == agentemailid && x.Status == "closed").ToList().Count;
-            ticket.Due = _context.TicketCollection.AsQueryable().Where(x => x.Status == "due").ToList().Count;
-            ticket.Total = await _context.TicketCollection.CountDocumentsAsync(new BsonDocument());
-                return (ticket);
+            var ticket = new TicketCount
+            {
+                Open = _context.TicketCollection.AsQueryable().Where(x => x.AgentEmailid == agentemailid && x.Status == "open").ToList().Count,
+                Closed = _context.TicketCollection.AsQueryable().Where(x => x.AgentEmailid == agentemailid && x.Status == "closed").ToList().Count,
+                Due = _context.TicketCollection.AsQueryable().Where(x => x.Status == "due").ToList().Count,
+                Total = await _context.TicketCollection.CountDocumentsAsync(new BsonDocument())
+            };
+            return (ticket);
         }
 
-        public async Task<string> AssignEmail(string id) {
-            //_context.TicketCollection.AsQueryable().Where(x => x.TicketId == id).ToList()[0];            
+        /// <summary>
+        /// Assigns a ticket to an agent using the RoundRobin Algorithm
+        /// </summary>
+        /// <param name="id">The Id of the ticket to which agent needs to be assigned</param>
+        /// <returns>EmailId of an Agent</returns>
+        public async Task<string> AssignEmail(string id)
+        {            
             string agentEmailId = "";
             var filterEmail = Builders<Ticket>.Filter;
             try
@@ -102,7 +118,11 @@ namespace ticket_management.Services
             return agentEmailId;
         }
 
-        //done
+        /// <summary>
+        /// Creates a Ticket with the given Query and the User EmailID
+        /// </summary>
+        /// <param name="chat">consists of the Query and the User EmailId</param>
+        /// <returns>A created Ticket</returns>
         public async Task<Ticket> CreateTicket(ChatDto chat)
         {
             Ticket ticket = new Ticket
@@ -110,7 +130,6 @@ namespace ticket_management.Services
                 TicketId = ObjectId.GenerateNewId().ToString(),
 
                 AgentEmailid = "bot",
-                Closedby = null,
                 Closedon = null,
                 CreatedOn = DateTime.Now,
                 Description = chat.Query,
@@ -120,19 +139,38 @@ namespace ticket_management.Services
                 Status = "open",
                 UpdatedBy = null,
                 UpdatedOn = null,
-                UserEmailId = chat.Useremail
+                UserEmailId = chat.UserEmail
             };
 
-            //_context.Ticket.Add(ticket);
-            //await _context.SaveChangesAsync();
-            //return ticket;
-
+            var filter = Builders<EndUser>.Filter.Eq("Email", chat.UserEmail);
+            ticket.UserName = (await _context.EndUsersCollection.Find(filter).FirstOrDefaultAsync()).Name;
+            ticket.UserImageUrl = (await _context.EndUsersCollection.Find(filter).FirstOrDefaultAsync()).ProfileImgUrl;
+                        
              await _context.TicketCollection.InsertOneAsync(ticket);
-             return (ticket);
+
+            var factory = new ConnectionFactory() { HostName = "35.221.76.107" };
+            using (var connection = factory.CreateConnection())
+            using (var channel = connection.CreateModel())
+            {
+                var model = connection.CreateModel();
+                var properties = model.CreateBasicProperties();
+                properties.Persistent = true;
+                String jsonified = JsonConvert.SerializeObject(await _context.TicketCollection.AsQueryable().FirstOrDefaultAsync(x => x.AgentEmailid == ticket.AgentEmailid));
+                var body = Encoding.UTF8.GetBytes(jsonified);
+                model.BasicPublish("", "ticket-notification", properties, body);
+                Console.WriteLine("Message Sent");
+            }
+
+
+            return (ticket);
 
         }
 
-        //done
+        /// <summary>
+        /// Returns the Count of tickets resolved, Average Resolution Time and CSAT score
+        /// </summary>
+        /// <param name="agentemail">The email of the agent who has logged in</param>
+        /// <returns>A Dto containing the Analytics Data</returns>
         public async Task<AnalyticsUIDto> GetAnalytics(string agentemail)
         {
             AnalyticsUIDto Analyticsdata = new AnalyticsUIDto
@@ -171,16 +209,22 @@ namespace ticket_management.Services
             Analyticsdata.Avgresolutiontime = _context.AnalyticsCollection.AsQueryable().Where(x => x.Date.Date == date.Date).Select(x => x.Avgresolutiontime).ToList()[0];
             return Analyticsdata;
         }
-
-
-        //done
+        
+        /// <summary>
+        /// To edit the ticket based on the parameters passed
+        /// </summary>
+        /// <param name="ticketid">The Id of the Ticket</param>
+        /// <param name="status">The Status of the Ticket</param>
+        /// <param name="priority">The Priority if the ticket</param>
+        /// <param name="intent">The intent of the Query submitted by the User</param>
+        /// <param name="feedbackscore">The feedback score provided by the User</param>
+        /// <param name="agentemailid">The email of the agent the ticket has been assigned to</param>
         public async Task EditTicket(string ticketid, string status, string priority , string intent, int feedbackscore, string agentemailid)
         {
 
             var sid = new ObjectId(ticketid);
             var filter = Builders<Ticket>.Filter.Eq("TicketId", sid);
-            var ticket =  await _context.TicketCollection.Find(filter).FirstOrDefaultAsync();
-
+            var ticket =  _context.TicketCollection.Find(filter).FirstOrDefault();
 
             var update = Builders<Ticket>.Update
                         .Set(x => x.Status, status ?? ticket.Status)
@@ -188,16 +232,35 @@ namespace ticket_management.Services
                         .Set(x => x.Intent, intent ?? ticket.Intent)
                         .Set(x => x.Feedbackscore, (feedbackscore == 0) ? ticket.Feedbackscore : feedbackscore)
                         .Set(x => x.Closedon , (status == "close") ? DateTime.Now : ticket.Closedon)
-                        .Set(x => x.Closedby, (status == "close") ? ticket.AgentEmailid : ticket.Closedby)
                         .Set(x => x.UpdatedOn, DateTime.Now)
                         .Set(x=> x.UpdatedBy , ticket.AgentEmailid);           
             
             _context.TicketCollection.UpdateOne(filter, update);
 
+            var factory = new ConnectionFactory() { HostName = "35.221.76.107" };
+            using (var connection = factory.CreateConnection())
+            using (var channel = connection.CreateModel())
+            {
+                var model = connection.CreateModel();
+                var properties = model.CreateBasicProperties();
+                properties.Persistent = true;
+                String jsonified = JsonConvert.SerializeObject(await _context.TicketCollection.AsQueryable().FirstOrDefaultAsync(x => x.AgentEmailid == ticket.AgentEmailid));
+                var body = Encoding.UTF8.GetBytes(jsonified);
+                model.BasicPublish("", "tasks", properties, body);
+                Console.WriteLine("Message Sent");
+            }
+
         }
 
-
-        //done
+        /// <summary>
+        /// Returns the Paged List Of Tickets Based on the filter Parameters provided
+        /// </summary>
+        /// <param name="agentemailid">The Email of the Agent</param>
+        /// <param name="useremailid">The Email of the End User</param>
+        /// <param name="priority">The Priority if the ticket</param>
+        /// <param name="status">The Status of the Ticket</param>
+        /// <param name="pageno">The Page NumbThe number of Tickets to be shown on each page</param>
+        /// <returns>List of tickets and the paging parameters</returns>
         public PagedList<Ticket> GetTickets(string agentemailid, string useremailid , string priority, string status, int pageno, int size)
         {
             pageno = (pageno == 0) ? 1 : pageno;
@@ -212,9 +275,10 @@ namespace ticket_management.Services
 
             
         }
-        
-        
-        //Update analytics csat score //done
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public async Task<Analytics> PushAnalytics()
         {
             DateTime date = DateTime.Now;
@@ -259,12 +323,12 @@ namespace ticket_management.Services
                 TimeSpan totalhours = new TimeSpan();
                 AvgResolutionTime avgresolutiondata = new AvgResolutionTime();
                 listOfTickets = _context.TicketCollection.AsQueryable().Where(x => x.Status == "close" && x.Intent == intent.name).ToList();                
-                avgresolutiondata.intent = intent.name;                
+                avgresolutiondata.Intent = intent.name;                
                 foreach (Ticket ticket in listOfTickets)
                 {
                     totalhours += (DateTime)ticket.Closedon - (DateTime)ticket.CreatedOn;
                 }
-                avgresolutiondata.avgresolutiontime = totalhours.Hours;
+                avgresolutiondata.Avgresolutiontime = totalhours.Hours;
                 avgResolutionTime.Add(avgresolutiondata);
             }
 
@@ -278,14 +342,20 @@ namespace ticket_management.Services
             await _context.AnalyticsCollection.InsertOneAsync(scheduledData);
             return scheduledData;
         }
-        
-        //done
+        /// <summary>
+        /// Returns a sorted list of agents who have resolved the most number of tickets
+        /// </summary>
+        /// <returns>List of Agents Dtos</returns>
         public List<TopAgentsDto> GetTopAgents()
         {
             var listOfAgents = _context.TicketCollection.AsQueryable().Where(x => x.Status == "close")
-              .GroupBy(x => x.AgentEmailid).OrderByDescending(x => x.Count()); List<TopAgentsDto> agentsList = new List<TopAgentsDto>(); foreach (var agentTickets in listOfAgents)
+              .GroupBy(x => x.AgentEmailid).OrderByDescending(x => x.Count());
+            List<TopAgentsDto> agentsList = new List<TopAgentsDto>();
+            foreach (var agentTickets in listOfAgents)
             {
-                var agent = _context.AgentsCollection.AsQueryable().Where(x => x.Email == agentTickets.Key).ToList()[0]; TopAgentsDto agentDto = new TopAgentsDto
+                var agent = _context.AgentsCollection.AsQueryable().Where(x => x.Email == agentTickets.Key).ToList()[0];
+
+                TopAgentsDto agentDto = new TopAgentsDto
                 {
                     NumberOfTicketsResolved = listOfAgents.Count(),
                     Name = agent.Name,
@@ -295,7 +365,10 @@ namespace ticket_management.Services
             }
             return agentsList;
         }
-
+        /// <summary>
+        /// Gets all the Agents of an Organisation from OnBoarding Module
+        /// </summary>
+        /// <returns></returns>
         public async Task GetAgents()
         {
             HttpClient httpclient = new HttpClient();
@@ -307,6 +380,10 @@ namespace ticket_management.Services
             await _context.AgentsCollection.InsertManyAsync(responsejson);
 
         }
+        /// <summary>
+        /// Gets all the End Users of an Organisation from OnBoarding Module
+        /// </summary>
+        /// <returns></returns>
         public async Task GetEndUsers()
         {
             HttpClient httpclient = new HttpClient();

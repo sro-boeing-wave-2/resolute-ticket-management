@@ -1,15 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+#region MS Directives
+using System.Net; 
 using System.Net.Mail;
-using System.Threading.Tasks;
+#endregion
 
 namespace ticket_management.Services
 {
     public class EmailNotificationService
     {
-        public void sendmail() { 
+        public void Sendmail() { 
 
             var fromAddress = new MailAddress("saikiran290695@gmail.com", "From saikiran_290695");
             var toAddress = new MailAddress("vasamsettisaikiran95@gmail.com", "To saikiran_95");

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -36,10 +36,13 @@ namespace ticket_management.Models
         public string UpdatedBy { get ; set ; }
         [BsonElement("Closedon")]
         public DateTime? Closedon { get; set ; }
-        [BsonElement("Closedby")]
-        public string Closedby { get ; set ; }
         [BsonElement("Feedbackscore")]
         public int? Feedbackscore { get; set; }
+        [BsonElement("UserName")]
+        public string UserName { get; set; }
+        [BsonElement("UserImageUrl")]
+        public string UserImageUrl { get; set; }
+
     }
 
 }

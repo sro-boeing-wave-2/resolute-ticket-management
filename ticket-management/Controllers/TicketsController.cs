@@ -1,16 +1,12 @@
-using System;
+#region MS Directives
 using System.Collections.Generic;
-using System.Linq;
-using RabbitMQ.Client;
-using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+#endregion
+#region Custom Directives
 using ticket_management.Models;
 using ticket_management.contract;
-using static ticket_management.Models.OnboardingUser;
-using Newtonsoft.Json;
+#endregion
 
 namespace ticket_management.Controllers
 {
@@ -19,11 +15,9 @@ namespace ticket_management.Controllers
     public class TicketsController : ControllerBase
     {
         private readonly ITicketService _ticketService;
-        //private readonly IUrlHelper _urlHelper;
 
         public TicketsController(ITicketService ticketService)
         {
-            //_urlHelper = urlHelper;
             _ticketService = ticketService;
         }
       
@@ -33,8 +27,6 @@ namespace ticket_management.Controllers
             var topAgents =  _ticketService.GetTopAgents();
             return Ok(topAgents);
         }
-
-
 
         [Route("detail/{id}")]
         public async Task<IActionResult> GetTicketById([FromRoute] string id)
@@ -55,8 +47,6 @@ namespace ticket_management.Controllers
             return Ok(ticket);
         }
 
-
-        //for user
         [Route("count")]
         public async Task<TicketCount> CountTickets([FromQuery] string agentEmailId)
         {
@@ -64,15 +54,9 @@ namespace ticket_management.Controllers
     
         }
 
-        
-
         [Route("filter")]
-        public IActionResult GetSortedTickets([FromHeader] string agentEmailId,
-            [FromQuery] string userEmailId,
-            [FromQuery] string priority,
-            [FromQuery] string status,
-            [FromQuery] int pageNumber,
-            [FromQuery] int pageSize)
+        public IActionResult GetSortedTickets([FromHeader] string agentEmailId,[FromQuery] string userEmailId,
+            [FromQuery] string priority,[FromQuery] string status,[FromQuery] int pageNumber,[FromQuery] int pageSize)
         {
             var model = _ticketService.GetTickets(agentEmailId, userEmailId, priority, status, pageNumber, pageSize);
             TicketOutputModel outputModel = new TicketOutputModel
@@ -95,7 +79,7 @@ namespace ticket_management.Controllers
         [HttpGet()]
         public IEnumerable<Ticket> Gettickets()
         {
-            return  _ticketService.getTickets();
+            return  _ticketService.GetTickets();
         }
 
 
@@ -112,7 +96,7 @@ namespace ticket_management.Controllers
         }
 
         [HttpGet("assignagent/{id}")]
-        public async Task<IActionResult> assignAgent([FromRoute] string id) {
+        public async Task<IActionResult> AssignAgent([FromRoute] string id) {
             string Email = await _ticketService.AssignEmail(id);
             return Ok(Email);
         } 
@@ -126,7 +110,8 @@ namespace ticket_management.Controllers
 
         // PUT: api/Tickets/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> EditTicket([FromRoute]string id, [FromQuery] string status, [FromQuery] string priority, [FromQuery] string intent, [FromQuery] int feedbackscore, [FromQuery] string agentemailid)
+        public async Task<IActionResult> EditTicket([FromRoute]string id, [FromQuery] string status, [FromQuery] string priority,
+            [FromQuery] string intent, [FromQuery] int feedbackscore, [FromQuery] string agentemailid)
         {
             await _ticketService.EditTicket(id, status, priority, intent, feedbackscore, agentemailid);
             return Ok();
