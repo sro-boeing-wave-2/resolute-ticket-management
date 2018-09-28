@@ -157,7 +157,7 @@ namespace ticket_management.Services
                 properties.Persistent = true;
                 String jsonified = JsonConvert.SerializeObject(await _context.TicketCollection.AsQueryable().FirstOrDefaultAsync(x => x.AgentEmailid == ticket.AgentEmailid));
                 var body = Encoding.UTF8.GetBytes(jsonified);
-                model.BasicPublish("", "ticket-notification", properties, body);
+                model.BasicPublish("ticket-notification", "ticket-notification", properties, body);
                 Console.WriteLine("Message Sent");
             }
 
@@ -261,7 +261,7 @@ namespace ticket_management.Services
                 properties.Persistent = true;
                 String jsonified = JsonConvert.SerializeObject(await _context.TicketCollection.AsQueryable().FirstOrDefaultAsync(x => x.AgentEmailid == ticket.AgentEmailid));
                 var body = Encoding.UTF8.GetBytes(jsonified);
-                model.BasicPublish("", "tasks", properties, body);
+                model.BasicPublish("ticket-notification", "tasks", properties, body);
                 Console.WriteLine("Message Sent");
             }
 
