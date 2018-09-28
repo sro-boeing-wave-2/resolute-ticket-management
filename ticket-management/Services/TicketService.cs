@@ -199,11 +199,8 @@ namespace ticket_management.Services
         //done
         public PagedList<Ticket> GetTickets(string agentemailid, string useremailid , string priority, string status, int pageno, int size)
         {
-            if (pageno == 0 || size == 0)
-            {
-                pageno = 1;
-                size = 20;
-            }
+            pageno = (pageno == 0) ? 1 : pageno;
+            size = (size == 0) ? 10 : size;
 
             return new PagedList<Ticket>(_context.TicketCollection.AsQueryable().Where(x =>
             (string.IsNullOrEmpty(status) || x.Status == status) &&
