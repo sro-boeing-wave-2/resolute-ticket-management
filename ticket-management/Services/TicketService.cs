@@ -218,27 +218,31 @@ namespace ticket_management.Services
         public async Task<Analytics> PushAnalytics()
         {
             DateTime date = DateTime.Now;
-            List<int?> ticketscore = new List<int?>();
+            List<Ticket> ClosedTickets = _context.TicketCollection.AsQueryable()
+                .Where(x => x.Status == "close").ToList();
 
-            ticketscore = _context.TicketCollection.AsQueryable()
-                .Where(x => 
-                x.Closedon.Value.Date == date.Date &&
-                x.Status == "close" &&
-                x.Feedbackscore > 3)
-                .Select(x => x.Feedbackscore).ToList();
+            int ticketscore = 0;
 
-            List<int?> totalticketcount = new List<int?>();
+            int totalticketcount = 0;
 
-            totalticketcount = _context.TicketCollection.AsQueryable()
-                .Where(x =>
-                x.Closedon.Value.Date == date.Date &&
-                x.Status == "close" &&
-                x.Feedbackscore > 0)
-                .Select(x => x.Feedbackscore).ToList();
+            foreach (Ticket Cticket in ClosedTickets)
+            {
+                if (Cticket.Closedon.Value.ToShortDateString() == date.ToShortDateString())
+                {
+                    if (Cticket.Feedbackscore > 0)
+                    {
+                        totalticketcount++;
+                        if (Cticket.Feedbackscore > 3)
+                            ticketscore += Cticket.Feedbackscore.Value;
+                    }
+                }
+
+            }
+
             double csatscore;
             try
             {
-                csatscore = (double)ticketscore.Sum() / totalticketcount.Count();
+                csatscore = (double)ticketscore / totalticketcount;
             }
             catch {
                 csatscore = 0;
