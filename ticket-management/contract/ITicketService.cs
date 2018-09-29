@@ -21,5 +21,6 @@ namespace ticket_management.contract
         Task GetAgents();
         Task<string> AssignEmail(string id);
         IEnumerable<Ticket> GetTickets();
+        //List<Ticket> GetRecentTickets(string agentEmailId);
     }
 }

@@ -274,12 +274,17 @@ namespace ticket_management.Services
         /// <param name="useremailid">The Email of the End User</param>
         /// <param name="priority">The Priority if the ticket</param>
         /// <param name="status">The Status of the Ticket</param>
-        /// <param name="pageno">The Page NumbThe number of Tickets to be shown on each page</param>
+        /// <param name="pageno">The Page Number</param>
+        /// <param name="size">The number of Tickets to be shown on each page</param>
         /// <returns>List of tickets and the paging parameters</returns>
         public PagedList<Ticket> GetTickets(string agentemailid, string useremailid , string priority, string status, int pageno, int size)
         {
             pageno = (pageno == 0) ? 1 : pageno;
             size = (size == 0) ? 10 : size;
+
+            //needs to be removed later
+            if (status != "open" || status != "close")
+                agentemailid = null;
 
             return new PagedList<Ticket>(_context.TicketCollection.AsQueryable().Where(x =>
             (string.IsNullOrEmpty(status) || x.Status == status) &&
