@@ -148,7 +148,7 @@ namespace ticket_management.Services
             var filterTicket = Builders<Ticket>.Filter.Eq("UserEmailId", chat.UserEmail);
             await _context.TicketCollection.InsertOneAsync(ticket);
 
-            var factory = new ConnectionFactory() { HostName = "35.221.76.107" };
+            var factory = new ConnectionFactory() { HostName = "35.221.88.74" };
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
             {
@@ -252,7 +252,7 @@ namespace ticket_management.Services
             
             _context.TicketCollection.UpdateOne(filter, update);
             var filterTicket = Builders<Ticket>.Filter.Eq("AgentEmailId", ticket.AgentEmailid);
-            var factory = new ConnectionFactory() { HostName = "35.221.76.107" };
+            var factory = new ConnectionFactory() { HostName = "35.221.88.74" };
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
             {
@@ -333,7 +333,7 @@ namespace ticket_management.Services
             }
             
             HttpClient http = new HttpClient();
-            string url = "http://35.221.76.107/intent/getIntent";
+            string url = "http://35.221.88.74/intent/getIntent";
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, url);
             requestMessage.Headers.Add("Access", "Allow_Service");
             var response = await http.SendAsync(requestMessage);
@@ -393,7 +393,7 @@ namespace ticket_management.Services
         public async Task GetAgents()
         {
             HttpClient httpclient = new HttpClient();
-            string url = "http://35.221.76.107/agents";
+            string url = "http://35.221.88.74/agents";
             var response = await httpclient.GetAsync(url);
             var result = await response.Content.ReadAsStringAsync();
             Agents[] responsejson = JsonConvert
@@ -408,7 +408,7 @@ namespace ticket_management.Services
         public async Task GetEndUsers()
         {
             HttpClient httpclient = new HttpClient();
-            string url = "http://35.221.76.107/endusers";
+            string url = "http://35.221.88.74/endusers";
             var response = await httpclient.GetAsync(url);
             var result = await response.Content.ReadAsStringAsync();
             EndUser[] responsejson = JsonConvert
