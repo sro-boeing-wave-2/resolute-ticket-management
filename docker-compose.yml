@@ -8,7 +8,9 @@ services:
         SERVICE_TAG: ticketmanagement 
     depends_on:
       - mongo
+    volumes:
+      - "/machine_config:/app/machine_config"
   mongo:
     image: mvertes/alpine-mongo
     volumes :
-       - "/data/resolute-ticket-management:/var/lib/mongodb"
+      - "/data/resolute-ticket-management:/var/lib/mongodb"
