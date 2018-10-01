@@ -352,7 +352,7 @@ namespace ticket_management.Services
             }
             Analytics scheduledData = new Analytics
             {
-                Date = date.Date,
+                    Date = date.Date,
                 Avgresolutiontime = avgResolutionTime,
                 Csatscore = csatscore
             };
