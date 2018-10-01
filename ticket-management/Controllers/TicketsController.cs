@@ -70,13 +70,6 @@ namespace ticket_management.Controllers
             return Ok(outputModel);
         }
 
-        //[Route("recent")]
-        //public IActionResult GetRecentTickets([FromHeader] string agentEmailId)
-        //{
-        //    var model = _ticketService.GetRecentTickets(agentEmailId);
-        //    return Ok(model);
-        //}
-
         [HttpGet("Analytics")]
         public AnalyticsUIDto GetAnalytics()
         {
