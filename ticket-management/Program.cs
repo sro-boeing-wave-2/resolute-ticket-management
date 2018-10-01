@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-
+using DotNetEnv;
 
 namespace ticket_management
 {
@@ -8,6 +8,7 @@ namespace ticket_management
     {
         public static void Main(string[] args)
         {
+            Env.Load("./machine_config/.env");
             CreateWebHostBuilder(args).Build().Run();
         }
 

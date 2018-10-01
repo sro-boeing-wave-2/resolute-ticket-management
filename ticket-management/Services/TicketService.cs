@@ -17,6 +17,7 @@ using RabbitMQ.Client;
 #region Custom Directives
 using ticket_management.contract;
 using ticket_management.Models;
+using ticket_management.Utilities;
 #endregion
 namespace ticket_management.Services
 {
@@ -49,21 +50,6 @@ namespace ticket_management.Services
         /// <returns>Ticket</returns>
         public async Task<Ticket> GetById(string id)
         {
-            //Ticket CompleteTicketDetails = await _context.Ticket
-            //                                    .Include(x => x.Comment)
-            //                                    .SingleOrDefaultAsync(x => x.TicketId == id);
-
-
-            //TicketDetailsDto Ticket = new TicketDetailsDto
-            //{
-            //    Id = CompleteTicketDetails.TicketId,
-            //    Name = "userName",
-            //    Priority = CompleteTicketDetails.Priority,
-            //    Status = CompleteTicketDetails.Status,
-            //    Subject = CompleteTicketDetails.Intent,
-            //    Description = CompleteTicketDetails.Description,
-            //};
-            //return Ticket;
 
             var filter = Builders<Ticket>.Filter.Eq("TicketId", id);
             var ticket = await _context.TicketCollection.Find(filter).FirstOrDefaultAsync();
@@ -148,7 +134,7 @@ namespace ticket_management.Services
             var filterTicket = Builders<Ticket>.Filter.Eq("UserEmailId", chat.UserEmail);
             await _context.TicketCollection.InsertOneAsync(ticket);
 
-            var factory = new ConnectionFactory() { HostName = "35.221.88.74" };
+            var factory = new ConnectionFactory() { HostName = Constants.BASE_URL };
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
             {
@@ -252,7 +238,7 @@ namespace ticket_management.Services
             
             _context.TicketCollection.UpdateOne(filter, update);
             var filterTicket = Builders<Ticket>.Filter.Eq("AgentEmailId", ticket.AgentEmailid);
-            var factory = new ConnectionFactory() { HostName = "35.221.88.74" };
+            var factory = new ConnectionFactory() { HostName = Constants.BASE_URL };
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
             {
@@ -283,7 +269,7 @@ namespace ticket_management.Services
             size = (size == 0) ? 10 : size;
 
             //needs to be removed later
-            if (status != "open" || status != "close")
+            if (status != "open" && status != "close")
                 agentemailid = null;
 
             return new PagedList<Ticket>(_context.TicketCollection.AsQueryable().Where(x =>
@@ -291,7 +277,7 @@ namespace ticket_management.Services
             (string.IsNullOrEmpty(priority) || x.Priority == priority) &&
             (string.IsNullOrEmpty(useremailid) || x.UserEmailId == useremailid) &&
             (string.IsNullOrEmpty(agentemailid) || x.AgentEmailid == agentemailid)
-            ).ToList(), pageno, size);
+            ).OrderByDescending(x=>x.CreatedOn).ToList(), pageno, size);
 
             
         }
@@ -333,7 +319,7 @@ namespace ticket_management.Services
             }
             
             HttpClient http = new HttpClient();
-            string url = "http://35.221.88.74/intent/getIntent";
+            string url =  Constants.BASE_URL + Constants.GET_INTENT;
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, url);
             requestMessage.Headers.Add("Access", "Allow_Service");
             var response = await http.SendAsync(requestMessage);
@@ -393,7 +379,9 @@ namespace ticket_management.Services
         public async Task GetAgents()
         {
             HttpClient httpclient = new HttpClient();
-            string url = "http://35.221.88.74/agents";
+            string url = Constants.BASE_URL + Constants.GET_AGENTS;
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, url);
+            requestMessage.Headers.Add("Access", "Allow_Service");
             var response = await httpclient.GetAsync(url);
             var result = await response.Content.ReadAsStringAsync();
             Agents[] responsejson = JsonConvert
@@ -408,7 +396,9 @@ namespace ticket_management.Services
         public async Task GetEndUsers()
         {
             HttpClient httpclient = new HttpClient();
-            string url = "http://35.221.88.74/endusers";
+            string url = Constants.BASE_URL + Constants.GET_USERS;
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, url);
+            requestMessage.Headers.Add("Access", "Allow_Service");
             var response = await httpclient.GetAsync(url);
             var result = await response.Content.ReadAsStringAsync();
             EndUser[] responsejson = JsonConvert
