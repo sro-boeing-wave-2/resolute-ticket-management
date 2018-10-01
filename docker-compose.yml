@@ -1,11 +1,11 @@
 version: '3'
 services:
   web:
-    container_name: Ticket-Management
+    container_name: ticket-management
     build: ./ticket-management
     labels:
-        SERVICE_80_NAME: Ticket-Management
-        SERVICE_TAG: TicketManagement 
+        SERVICE_80_NAME: ticket-management
+        SERVICE_TAG: ticketmanagement 
     depends_on:
       - mongo
   mongo:
