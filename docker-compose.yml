@@ -5,10 +5,8 @@ services:
     build: ./ticket-management
     labels:
         SERVICE_80_NAME: Ticket-Management
-        SERVICE_TAG: TicketManagement
+        SERVICE_TAG: TicketManagement 
     depends_on:
-      - db
-  db:
+      - mongo
+  mongo:
     image: mvertes/alpine-mongo
-    ports:
-      - "27017:27017"
