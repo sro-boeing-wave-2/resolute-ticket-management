@@ -134,7 +134,7 @@ namespace ticket_management.Services
             var filterTicket = Builders<Ticket>.Filter.Eq("UserEmailId", chat.UserEmail);
             await _context.TicketCollection.InsertOneAsync(ticket);
 
-            var factory = new ConnectionFactory() { HostName = Constants.BASE_URL };
+            var factory = new ConnectionFactory() { HostName = Environment.GetEnvironmentVariable("MACHINE_LOCAL_IPV4")};
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
             {
@@ -238,7 +238,7 @@ namespace ticket_management.Services
             
             _context.TicketCollection.UpdateOne(filter, update);
             var filterTicket = Builders<Ticket>.Filter.Eq("AgentEmailId", ticket.AgentEmailid);
-            var factory = new ConnectionFactory() { HostName = Constants.BASE_URL };
+            var factory = new ConnectionFactory() { HostName = Environment.GetEnvironmentVariable("MACHINE_LOCAL_IPV4")};
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
             {
