@@ -8,9 +8,16 @@ services:
         SERVICE_TAG: ticketmanagement 
     depends_on:
       - mongo
+      - rabbitmq
     volumes:
       - "/machine_config:/app/machine_config"
   mongo:
     image: mvertes/alpine-mongo
     volumes :
       - "/data/resolute-ticket-management:/var/lib/mongodb"
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
