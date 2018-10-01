@@ -10,3 +10,5 @@ services:
       - mongo
   mongo:
     image: mvertes/alpine-mongo
+    volumes :
+       - "/data/resolute-ticket-management:/var/lib/mongodb"
