@@ -374,7 +374,7 @@ namespace ticket_management.Services
 
                 TopAgentsDto agentDto = new TopAgentsDto
                 {
-                    NumberOfTicketsResolved = listOfAgents.Count(),
+                    NumberOfTicketsResolved = agentTickets.Count(),
                     Name = agent.Name,
                     ProfileImageUrl = agent.ProfileImgUrl
                 };
