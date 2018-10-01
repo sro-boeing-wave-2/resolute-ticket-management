@@ -327,18 +327,28 @@ namespace ticket_management.Services
             Intent intents = JsonConvert.DeserializeObject<Intent>(result);
             List<Ticket> listOfTickets = new List<Ticket>();
             List<AvgResolutionTime> avgResolutionTime = new  List<AvgResolutionTime>();
-
-            foreach (IntentDto intent in intents.results) {
-                TimeSpan totalhours = new TimeSpan();
-                AvgResolutionTime avgresolutiondata = new AvgResolutionTime();
-                listOfTickets = _context.TicketCollection.AsQueryable().Where(x => x.Status == "close" && x.Intent == intent.name).ToList();                
-                avgresolutiondata.Intent = intent.name;                
-                foreach (Ticket ticket in listOfTickets)
+            if (intents.results.Count() != 0)
+            {
+                foreach (IntentDto intent in intents.results)
                 {
-                    totalhours += (DateTime)ticket.Closedon - (DateTime)ticket.CreatedOn;
+                    TimeSpan totalhours = new TimeSpan();
+                    AvgResolutionTime avgresolutiondata = new AvgResolutionTime();
+                    listOfTickets = _context.TicketCollection.AsQueryable().Where(x => x.Status == "close" && x.Intent == intent.name).ToList();
+                    avgresolutiondata.Intent = intent.name;
+                    foreach (Ticket ticket in listOfTickets)
+                    {
+                        totalhours += (DateTime)ticket.Closedon - (DateTime)ticket.CreatedOn;
+                    }
+                    avgresolutiondata.Avgresolutiontime = totalhours.Hours;
+                    avgResolutionTime.Add(avgresolutiondata);
                 }
-                avgresolutiondata.Avgresolutiontime = totalhours.Hours;
-                avgResolutionTime.Add(avgresolutiondata);
+            }
+            else
+            {
+                AvgResolutionTime avgResolutiontempdata = new AvgResolutionTime() {
+                    Avgresolutiontime = 00, Intent = "noData"
+                };
+                avgResolutionTime.Add(avgResolutiontempdata);
             }
             Analytics scheduledData = new Analytics
             {
