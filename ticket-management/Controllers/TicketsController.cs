@@ -48,14 +48,14 @@ namespace ticket_management.Controllers
         }
 
         [Route("count")]
-        public async Task<TicketCount> CountTickets([FromQuery] string agentEmailId)
+        public async Task<TicketCount> CountTickets([FromHeader(Name ="email")] string agentEmailId)
         {
             return await _ticketService.GetCount(agentEmailId);
     
         }
 
         [Route("filter")]
-        public IActionResult GetSortedTickets([FromHeader] string agentEmailId,[FromQuery] string userEmailId,
+        public IActionResult GetSortedTickets([FromHeader(Name ="email")] string agentEmailId,[FromQuery] string userEmailId,
             [FromQuery] string priority,[FromQuery] string status,[FromQuery] int pageNumber,[FromQuery] int pageSize)
         {
             var model = _ticketService.GetTickets(agentEmailId, userEmailId, priority, status, pageNumber, pageSize);
