@@ -317,7 +317,10 @@ namespace ticket_management.Services
             catch {
                 csatscore = 0;
             }
-            
+            if (Double.IsNaN(csatscore))
+            {
+                csatscore = 0;
+            }
            // HttpClient http = new HttpClient();
            //// string url =  Constants.BASE_URL + Constants.GET_INTENT;
            // HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, "http://35.221.88.74/intent/getintent");
