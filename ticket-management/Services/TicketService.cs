@@ -167,7 +167,7 @@ namespace ticket_management.Services
             };
 
             Analyticsdata.Analyticscsat.AddRange(
-                _context.AnalyticsCollection.AsQueryable().Select(
+                _context.AnalyticsCollection.AsQueryable().Where(x => x.Csatscore > 0 ).Select(
                     x => new AnalyticsCsatDto { Date = x.Date, Csatscore = x.Csatscore }
                     )
                 );
@@ -204,7 +204,7 @@ namespace ticket_management.Services
                 if (i.Date.Date == date.AddDays(-1).Date)
                 { 
                     Analyticsdata.Avgresolutiontime.AddRange(i.Avgresolutiontime);
-                    break;
+                   // break;
                 }
             }
             //Analyticsdata.Avgresolutiontime = _context.AnalyticsCollection.AsQueryable().Where(x => x.Date.Date == date.Date).Select(x => x.Avgresolutiontime).ToList()[0];
@@ -317,10 +317,10 @@ namespace ticket_management.Services
             //catch {
             //    csatscore = 0;
             //}
-            if (Double.IsNaN(csatscore))
-            {
+            //if (IsNaN(csatscore))
+            //{
                 csatscore = 0;
-            }
+            //}
            // HttpClient http = new HttpClient();
            //// string url =  Constants.BASE_URL + Constants.GET_INTENT;
            // HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, "http://35.221.88.74/intent/getintent");
@@ -355,7 +355,7 @@ namespace ticket_management.Services
             //}
             Analytics scheduledData = new Analytics
             {
-                    Date = date.Date,
+                Date = date.Date,
                 Avgresolutiontime = avgResolutionTime,
                 Csatscore = csatscore
             };
