@@ -310,13 +310,13 @@ namespace ticket_management.Services
             }
 
             double csatscore;
-            try
-            {
-                csatscore = (double)ticketscore / totalticketcount;
-            }
-            catch {
-                csatscore = 0;
-            }
+            //try
+            //{
+            //    csatscore = (double)ticketscore / totalticketcount;
+            //}
+            //catch {
+            //    csatscore = 0;
+            //}
             if (Double.IsNaN(csatscore))
             {
                 csatscore = 0;
