@@ -48,7 +48,7 @@ namespace ticket_management.Controllers
         }
 
         [Route("count")]
-        public async Task<TicketCount> CountTickets([FromQuery] string agentEmailId)
+        public async Task<TicketCount> CountTickets([FromHeader(Name ="email")] string agentEmailId)
         {
             return await _ticketService.GetCount(agentEmailId);
     
