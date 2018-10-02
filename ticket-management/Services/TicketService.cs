@@ -167,7 +167,7 @@ namespace ticket_management.Services
             };
 
             Analyticsdata.Analyticscsat.AddRange(
-                _context.AnalyticsCollection.AsQueryable().Where(x => x.Csatscore > 0 ).Select(
+                _context.AnalyticsCollection.AsQueryable().Where(x => x.Csatscore >= 0 ).Select(
                     x => new AnalyticsCsatDto { Date = x.Date, Csatscore = x.Csatscore }
                     )
                 );
@@ -319,7 +319,7 @@ namespace ticket_management.Services
             //}
             //if (IsNaN(csatscore))
             //{
-                csatscore = 0;
+                csatscore = 2.5;
             //}
            // HttpClient http = new HttpClient();
            //// string url =  Constants.BASE_URL + Constants.GET_INTENT;
