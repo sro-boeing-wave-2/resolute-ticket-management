@@ -21,3 +21,7 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+  scheduler:
+    container_name: analytics-scheduler
+    build: ./AnalyticsScheduler
+        
