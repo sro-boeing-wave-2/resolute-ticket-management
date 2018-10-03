@@ -314,38 +314,38 @@ namespace ticket_management.Services
                 csatscore = 0;
             }
 
-            HttpClient http = new HttpClient();
-            string url =  Constants.BASE_URL + Constants.GET_INTENT;
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, url);
-            requestMessage.Headers.Add("Access", "Allow_Service");
-            var response = await http.SendAsync(requestMessage);
-            var result = await response.Content.ReadAsStringAsync();
-            Intent intents = JsonConvert.DeserializeObject<Intent>(result);
-            List<Ticket> listOfTickets = new List<Ticket>();
+            //HttpClient http = new HttpClient();
+            //string url =  Constants.BASE_URL + Constants.GET_INTENT;
+            //HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, url);
+            //requestMessage.Headers.Add("Access", "Allow_Service");
+            //var response = await http.SendAsync(requestMessage);
+            //var result = await response.Content.ReadAsStringAsync();
+            //Intent intents = JsonConvert.DeserializeObject<Intent>(result);
+            //List<Ticket> listOfTickets = new List<Ticket>();
             List<AvgResolutionTime> avgResolutionTime = new  List<AvgResolutionTime>();
-            if (intents.results.Count() != 0)
-            {
-                foreach (string intent in intents.results)
-                {
-                    TimeSpan totalhours = new TimeSpan();
-                    AvgResolutionTime avgresolutiondata = new AvgResolutionTime();
-                    listOfTickets = _context.TicketCollection.AsQueryable().Where(x => x.Status == "close" && x.Intent == intent).ToList();
-                    avgresolutiondata.Intent = intent;
-                    foreach (Ticket ticket in listOfTickets)
-                    {
-                        totalhours += (DateTime)ticket.Closedon - (DateTime)ticket.CreatedOn;
-                    }
-                    avgresolutiondata.Avgresolutiontime = totalhours.Hours;
-                    avgResolutionTime.Add(avgresolutiondata);
-                }
-            }
+            //if (intents.results.Count() != 0)
+            //{
+            //    foreach (string intent in intents.results)
+            //    {
+            //        TimeSpan totalhours = new TimeSpan();
+            //        AvgResolutionTime avgresolutiondata = new AvgResolutionTime();
+            //        listOfTickets = _context.TicketCollection.AsQueryable().Where(x => x.Status == "close" && x.Intent == intent).ToList();
+            //        avgresolutiondata.Intent = intent;
+            //        foreach (Ticket ticket in listOfTickets)
+            //        {
+            //            totalhours += (DateTime)ticket.Closedon - (DateTime)ticket.CreatedOn;
+            //        }
+            //        avgresolutiondata.Avgresolutiontime = totalhours.Hours;
+            //        avgResolutionTime.Add(avgresolutiondata);
+            //    }
+            //}
 
-            else { 
+            //else { 
             AvgResolutionTime avgResolutiontempdata = new AvgResolutionTime() {
                 Avgresolutiontime = 00, Intent = "noData"
                 };
                 avgResolutionTime.Add(avgResolutiontempdata);
-            }
+            //}
             Analytics scheduledData = new Analytics
             {
                 Date = date.Date,
