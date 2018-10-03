@@ -252,6 +252,17 @@ namespace ticket_management.Services
 
         }
 
+        public string updatefeedbackScore(string id, feedback data)
+        {
+            var filter = Builders<Ticket>.Filter.Eq("TicketId", id);
+            var update = Builders<Ticket>.Update
+                        .Set(x => x.Feedbackscore, data.feedbackScore);
+            _context.TicketCollection.UpdateOne(filter, update);
+
+            return "feedbackUpdated";
+        }
+
+
         /// <summary>
         /// Returns the Paged List Of Tickets Based on the filter Parameters provided
         /// </summary>

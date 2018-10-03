@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace ticket_management.Models
 {
-    public class Intent
+    public class feedback
     {
-        public List<string> results { get; set; }
+        public int feedbackScore { get; set; }
     }
 }

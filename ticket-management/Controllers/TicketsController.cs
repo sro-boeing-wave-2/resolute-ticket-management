@@ -20,18 +20,18 @@ namespace ticket_management.Controllers
         {
             _ticketService = ticketService;
         }
-      
+
         [Route("leaderboard")]
         public IActionResult GetTopAgents()
         {
-            var topAgents =  _ticketService.GetTopAgents();
+            var topAgents = _ticketService.GetTopAgents();
             return Ok(topAgents);
         }
 
         [Route("detail/{id}")]
         public async Task<IActionResult> GetTicketById([FromRoute] string id)
         {
-            
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -48,15 +48,15 @@ namespace ticket_management.Controllers
         }
 
         [Route("count")]
-        public async Task<TicketCount> CountTickets([FromHeader(Name ="email")] string agentEmailId)
+        public async Task<TicketCount> CountTickets([FromHeader(Name = "email")] string agentEmailId)
         {
             return await _ticketService.GetCount(agentEmailId);
-    
+
         }
 
         [Route("filter")]
-        public IActionResult GetSortedTickets([FromHeader(Name ="email")] string agentEmailId,[FromQuery] string userEmailId,
-            [FromQuery] string priority,[FromQuery] string status,[FromQuery] int pageNumber,[FromQuery] int pageSize)
+        public IActionResult GetSortedTickets([FromHeader(Name = "email")] string agentEmailId, [FromQuery] string userEmailId,
+            [FromQuery] string priority, [FromQuery] string status, [FromQuery] int pageNumber, [FromQuery] int pageSize)
         {
             var model = _ticketService.GetTickets(agentEmailId, userEmailId, priority, status, pageNumber, pageSize);
             TicketOutputModel outputModel = new TicketOutputModel
@@ -79,7 +79,7 @@ namespace ticket_management.Controllers
         [HttpGet()]
         public IEnumerable<Ticket> Gettickets()
         {
-            return  _ticketService.GetTickets();
+            return _ticketService.GetTickets();
         }
 
 
@@ -99,7 +99,7 @@ namespace ticket_management.Controllers
         public async Task<IActionResult> AssignAgent([FromRoute] string id) {
             string Email = await _ticketService.AssignEmail(id);
             return Ok(Email);
-        } 
+        }
         [HttpGet("analytics/update")]
         public async Task<IActionResult> CreateAnalysis()
         {
@@ -115,6 +115,14 @@ namespace ticket_management.Controllers
         {
             await _ticketService.EditTicket(id, status, priority, intent, feedbackscore, agentemailid);
             return Ok();
+        }
+
+        //updateFeedbackScore
+        [HttpPut("{id}/feedback")]
+        public IActionResult updateFeedback([FromRoute] string id, [FromBody] feedback data)
+        {
+            string response = _ticketService.updatefeedbackScore(id, data);
+            return Ok(response);
         }
        
     }

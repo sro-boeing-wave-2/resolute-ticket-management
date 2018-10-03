@@ -19,6 +19,7 @@ namespace ticket_management.contract
         List<TopAgentsDto> GetTopAgents();
         Task<Analytics> PushAnalytics();
         Task GetAgents();
+        string updatefeedbackScore(string id, feedback data);
         Task<string> AssignEmail(string id);
         IEnumerable<Ticket> GetTickets();
         //List<Ticket> GetRecentTickets(string agentEmailId);
