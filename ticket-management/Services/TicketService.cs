@@ -370,8 +370,8 @@ namespace ticket_management.Services
         /// <returns>List of Agents Dtos</returns>
         public List<TopAgentsDto> GetTopAgents()
         {
-            var listOfAgents = _context.TicketCollection.AsQueryable().Where(x => x.Status == "close" && x.AgentEmailid != "bot")
-              .GroupBy(x => x.AgentEmailid).OrderByDescending(x => x.Count());
+            var listOfAgents = _context.TicketCollection.Find(x => x.Status == "close" && x.AgentEmailid != "bot").ToList()
+                .GroupBy(x => x.AgentEmailid).OrderByDescending(x => x.Count());
             List<TopAgentsDto> agentsList = new List<TopAgentsDto>();
             foreach (var agentTickets in listOfAgents)
             {
