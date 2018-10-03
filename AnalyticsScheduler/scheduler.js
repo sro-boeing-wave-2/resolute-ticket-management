@@ -1,7 +1,7 @@
 var CronJob = require('cron').CronJob;
 const request = require('superagent');
 
-new CronJob('0 0 * * *', function() {
+new CronJob('55 23 * * *', function() {
   console.log('You will see this message every second');  
   request
   .get("http://13.126.8.255/tickets/analytics/update")
