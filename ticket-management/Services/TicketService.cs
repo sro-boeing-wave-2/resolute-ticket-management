@@ -297,62 +297,55 @@ namespace ticket_management.Services
 
             foreach (Ticket Cticket in ClosedTickets)
             {
-                if (Cticket.Closedon.Value.ToShortDateString() == date.ToShortDateString())
-                {
                     if (Cticket.Feedbackscore > 0)
                     {
                         totalticketcount++;
                         if (Cticket.Feedbackscore > 3)
                             ticketscore += Cticket.Feedbackscore.Value;
                     }
-                }
-
+            }
+            double csatscore;
+            try
+            {
+                csatscore = (double)ticketscore / totalticketcount;
+            }
+            catch
+            {
+                csatscore = 0;
             }
 
-            double csatscore;
-            //try
-            //{
-            //    csatscore = (double)ticketscore / totalticketcount;
-            //}
-            //catch {
-            //    csatscore = 0;
-            //}
-            //if (IsNaN(csatscore))
-            //{
-                csatscore = 2.5;
-            //}
-           // HttpClient http = new HttpClient();
-           //// string url =  Constants.BASE_URL + Constants.GET_INTENT;
-           // HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, "http://35.221.88.74/intent/getintent");
-           // requestMessage.Headers.Add("Access", "Allow_Service");
-           // var response = await http.SendAsync(requestMessage);
-           // var result = await response.Content.ReadAsStringAsync();
-           // Intent intents = JsonConvert.DeserializeObject<Intent>(result);
+            HttpClient http = new HttpClient();
+            string url =  Constants.BASE_URL + Constants.GET_INTENT;
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, url);
+            requestMessage.Headers.Add("Access", "Allow_Service");
+            var response = await http.SendAsync(requestMessage);
+            var result = await response.Content.ReadAsStringAsync();
+            Intent intents = JsonConvert.DeserializeObject<Intent>(result);
             List<Ticket> listOfTickets = new List<Ticket>();
             List<AvgResolutionTime> avgResolutionTime = new  List<AvgResolutionTime>();
-            //if (intents.results.Count() != 0)
-            //{
-            //    foreach (IntentDto intent in intents.results)
-            //    {
-            //        TimeSpan totalhours = new TimeSpan();
-            //        AvgResolutionTime avgresolutiondata = new AvgResolutionTime();
-            //        listOfTickets = _context.TicketCollection.AsQueryable().Where(x => x.Status == "close" && x.Intent == intent.name).ToList();
-            //        avgresolutiondata.Intent = intent.name;
-            //        foreach (Ticket ticket in listOfTickets)
-            //        {
-            //            totalhours += (DateTime)ticket.Closedon - (DateTime)ticket.CreatedOn;
-            //        }
-            //        avgresolutiondata.Avgresolutiontime = totalhours.Hours;
-            //        avgResolutionTime.Add(avgresolutiondata);
-            //    }
-            //}
-            //else
-            //{
+            if (intents.results.Count() != 0)
+            {
+                foreach (string intent in intents.results)
+                {
+                    TimeSpan totalhours = new TimeSpan();
+                    AvgResolutionTime avgresolutiondata = new AvgResolutionTime();
+                    listOfTickets = _context.TicketCollection.AsQueryable().Where(x => x.Status == "close" && x.Intent == intent).ToList();
+                    avgresolutiondata.Intent = intent;
+                    foreach (Ticket ticket in listOfTickets)
+                    {
+                        totalhours += (DateTime)ticket.Closedon - (DateTime)ticket.CreatedOn;
+                    }
+                    avgresolutiondata.Avgresolutiontime = totalhours.Hours;
+                    avgResolutionTime.Add(avgresolutiondata);
+                }
+            }
+
+            else { 
             AvgResolutionTime avgResolutiontempdata = new AvgResolutionTime() {
                 Avgresolutiontime = 00, Intent = "noData"
                 };
                 avgResolutionTime.Add(avgResolutiontempdata);
-            //}
+            }
             Analytics scheduledData = new Analytics
             {
                 Date = date.Date,
