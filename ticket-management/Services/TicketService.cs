@@ -339,12 +339,11 @@ namespace ticket_management.Services
             //    }
             //}
 
-             
+
             AvgResolutionTime avgResolutiontempdata = new AvgResolutionTime() {
                 Avgresolutiontime = 00, Intent = "noData"
                 };
                 avgResolutionTime.Add(avgResolutiontempdata);
-            
             Analytics scheduledData = new Analytics
             {
                 Date = date.Date,
