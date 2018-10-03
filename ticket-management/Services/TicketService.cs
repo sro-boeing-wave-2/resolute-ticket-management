@@ -67,9 +67,9 @@ namespace ticket_management.Services
             var filter = Builders<Ticket>.Filter;
             var ticket = new TicketCount
             {
-                Open = _context.TicketCollection.AsQueryable().Where(x => x.AgentEmailid == agentemailid && x.Status == "open").ToList().Count,
-                Closed = _context.TicketCollection.AsQueryable().Where(x => x.AgentEmailid == agentemailid && x.Status == "closed").ToList().Count,
-                Due = _context.TicketCollection.AsQueryable().Where(x => x.Status == "due").ToList().Count,
+                Open = _context.TicketCollection.Find(x => x.AgentEmailid == agentemailid && x.Status == "open").ToList().Count(),
+                Closed = _context.TicketCollection.Find(x => x.Status == "close" && x.AgentEmailid == agentemailid).ToList().Count(),
+                Due = _context.TicketCollection.Find(filter.Eq("Status", "due")).ToList().Count(),
                 Total = await _context.TicketCollection.CountDocumentsAsync(new BsonDocument())
             };
             return (ticket);
