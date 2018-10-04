@@ -146,23 +146,27 @@ namespace ticket_management.Services
                 model.BasicPublish("ticket-notification", "ticket-notification", properties, body);
                 Console.WriteLine("Message Sent");
             }
-            try
+            if (ticket.Status == "close")
             {
-                EmailNotificationService service = new EmailNotificationService();
-                var template = await System.IO.File.ReadAllTextAsync("./htmlPages/closeTicketNotification.txt");
-                template = template.Replace("$${TicketId}", ticket.TicketId);
-                template = template.Replace("$${Query}", ticket.Description);
-                var Mailbody = template;
-                service.Sendmail(
-                   "saikiran290695@gmail.com",
-                   "vasamsettisaikiran95@gmail.com",
-                   "garysai95",
-                   "Resolute Ticket Status", Mailbody, "Resolute", "client"
-                   );
+                try
+                {
+                    EmailNotificationService service = new EmailNotificationService();
+                    var template = await System.IO.File.ReadAllTextAsync("./htmlPages/closeTicketNotification.txt");
+                    template = template.Replace("$${TicketId}", ticket.TicketId);
+                    template = template.Replace("$${Query}", ticket.Description);
+                    var Mailbody = template;
+                    service.Sendmail(
+                       "saikiran290695@gmail.com",
+                       "vasamsettisaikiran95@gmail.com",
+                       "garysai95",
+                       "Resolute Ticket Status", Mailbody, "Resolute", "client"
+                       );
+                }
+                catch
+                {
+                    Console.WriteLine("EmailNotification Failed");
+                };
             }
-            catch{
-                Console.WriteLine("EmailNotification Failed");
-            };
                 return (ticket);
         }
 
