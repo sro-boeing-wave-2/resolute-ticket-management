@@ -92,7 +92,7 @@ namespace ticket_management.Services
                 Console.WriteLine(ticketCount);
                 Console.WriteLine(agentCount);
                 long agentId = (ticketCount + 1) % agentCount;
-                agentEmailId = _context.AgentsCollection.Find(agentfilter.Eq("Id", agentId)).ToList()[0].Email;
+                agentEmailId = _context.AgentsCollection.Find(agentfilter.Eq("Id", agentId + 1)).ToList()[0].Email;
             }
             catch (Exception e){
                 Console.WriteLine(e);
