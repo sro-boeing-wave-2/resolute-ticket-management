@@ -133,7 +133,7 @@ namespace ticket_management.Services
             ticket.UserImageUrl = (await _context.EndUsersCollection.Find(filter).FirstOrDefaultAsync()).ProfileImgUrl;
             var filterTicket = Builders<Ticket>.Filter.Eq("UserEmailId", chat.UserEmail);
             await _context.TicketCollection.InsertOneAsync(ticket);
-
+           
             var factory = new ConnectionFactory() { HostName = Environment.GetEnvironmentVariable("MACHINE_LOCAL_IPV4")};
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
@@ -146,10 +146,24 @@ namespace ticket_management.Services
                 model.BasicPublish("ticket-notification", "ticket-notification", properties, body);
                 Console.WriteLine("Message Sent");
             }
-
-
-            return (ticket);
-
+            try
+            {
+                EmailNotificationService service = new EmailNotificationService();
+                var template = await System.IO.File.ReadAllTextAsync("./htmlPages/closeTicketNotification.txt");
+                template = template.Replace("$${TicketId}", ticket.TicketId);
+                template = template.Replace("$${Query}", ticket.Description);
+                var Mailbody = template;
+                service.Sendmail(
+                   "saikiran290695@gmail.com",
+                   "vasamsettisaikiran95@gmail.com",
+                   "garysai95",
+                   "Resolute Ticket Status", Mailbody, "Resolute", "client"
+                   );
+            }
+            catch{
+                Console.WriteLine("EmailNotification Failed");
+            };
+                return (ticket);
         }
 
 
@@ -248,6 +262,28 @@ namespace ticket_management.Services
                 var body = Encoding.UTF8.GetBytes(jsonified);
                 model.BasicPublish("ticket-notification", "tasks", properties, body);
                 Console.WriteLine("Message Sent");
+            }
+
+            if (status == "close")
+            {
+                try
+                {
+                    EmailNotificationService service = new EmailNotificationService();
+                    var template = await System.IO.File.ReadAllTextAsync("./htmlPages/createTicketAlert.txt");
+                    template = template.Replace("$${TicketId}", ticket.TicketId);
+                    template = template.Replace("$${Query}", ticket.Description);
+                    var Mailbody = template;
+                    service.Sendmail(
+                       "saikiran290695@gmail.com",
+                       "vasamsettisaikiran95@gmail.com",
+                       "garysai95",
+                       "Resolute Ticket Status", Mailbody, "Resolute", "client"
+                       );
+                }
+                catch
+                {
+                    Console.WriteLine("EmailNotification Failed");
+                };
             }
 
         }
