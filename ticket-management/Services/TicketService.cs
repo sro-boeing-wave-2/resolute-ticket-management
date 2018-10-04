@@ -146,12 +146,11 @@ namespace ticket_management.Services
                 model.BasicPublish("ticket-notification", "ticket-notification", properties, body);
                 Console.WriteLine("Message Sent");
             }
-            if (ticket.Status == "close")
-            {
+            
                 try
                 {
                     EmailNotificationService service = new EmailNotificationService();
-                    var template = await System.IO.File.ReadAllTextAsync("./htmlPages/closeTicketNotification.txt");
+                    var template = await System.IO.File.ReadAllTextAsync("./htmlPages/createTicketAlert.txt");
                     template = template.Replace("$${TicketId}", ticket.TicketId);
                     template = template.Replace("$${Query}", ticket.Description);
                     var Mailbody = template;
@@ -166,7 +165,7 @@ namespace ticket_management.Services
                 {
                     Console.WriteLine("EmailNotification Failed");
                 };
-            }
+            
                 return (ticket);
         }
 
@@ -273,7 +272,7 @@ namespace ticket_management.Services
                 try
                 {
                     EmailNotificationService service = new EmailNotificationService();
-                    var template = await System.IO.File.ReadAllTextAsync("./htmlPages/createTicketAlert.txt");
+                    var template = await System.IO.File.ReadAllTextAsync("./htmlPages/closeTicketNotification.txt");
                     template = template.Replace("$${TicketId}", ticket.TicketId);
                     template = template.Replace("$${Query}", ticket.Description);
                     var Mailbody = template;
