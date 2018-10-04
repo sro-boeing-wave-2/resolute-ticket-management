@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<tbody>
+    <tr>
+        <td>
+            <table style="border:2px solid #E77817;text-align:center;" width="602" cellspacing="0" cellpadding="0" border="0" align="center">
+                <tbody>
+                    <tr>
+                        <td style="font-size:16px;font-family:Arial, Helvetica, sans-serif;color:#97291E;text-align:center;padding-left:15px;padding-top:10px;padding-bottom:5px;padding-right:15px;font-weight:bold;"
+                            valign="top" bgcolor="#f6f5f5" align="center">
+                            RESOLUTE
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-size:14px;font-family:Arial, Helvetica, sans-serif;color:#333;text-align:center;padding-left:15px;padding-top:2px;padding-bottom:10px;padding-right:15px;font-weight:bold;"
+                            valign="top" bgcolor="#f6f5f5" align="center">
+                            <p>
+                                Your Issue has been successfuly registered and our team is working on it.
+                            </p>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding-bottom:4px;padding-top:5px;padding-left:8px;padding-right:8px;color:#053C6D;font-family:Arial, Helvetica, sans-serif;font-size:18px;text-align:center;font-weight:bold;letter-spacing:1px;"
+                            valign="top" align="left">
+                            <table width="80%" cellspacing="0" cellpadding="0" border="0" align="center">
+                                <tbody>
+                                    <tr>
+                                        <td style="padding-bottom:8px;padding-top:5px;padding-left:2px;padding-right:8px;color:#333;font-weight:bold;font-family:Arial, Helvetica, sans-serif;font-size:13px;text-align:center;line-height:18px;"
+                                            width="46%" valign="top">
+                                            <br />
+                                            <strong>IssueId</strong> - $${TicketId} 
+                                            <br />
+                                            <br />
+                                            <strong>Issue</strong> -  $${Query} 
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-size:13px;font-family:Arial, Helvetica, sans-serif;color:#333;text-align:center;padding-left:8px;padding-top:2px;padding-bottom:5px;padding-right:8px;"
+                            valign="top" align="center">
+
+                            <strong>Note : Please note the above Id for further reference</strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-size:13px;font-family:Arial, Helvetica, sans-serif;color:#333;text-align:center;padding-left:10px;padding-top:2px;padding-bottom:5px;padding-right:10px;"
+                            valign="top" align="center">
+                            We'll be updating you upon the issue status via email. In case of any queries, please feel free to write to us at
+                            <a rel="nofollow" ymailto="mailto:saikiran290695@gmail.com" target="_blank" href="mailto:saikiran290695@gmail.com" style="color:#333;text-decoration:underline;">resolute-customercare@boeing.com</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:5px 8px 2px 8px;" valign="middle" align="center">
+                            <table width="580" cellspacing="0" cellpadding="0" border="0" align="center">
+                                <tbody>
+                                    <tr>
+                                        <br />
+                                        <td class="yiv4711582938font10" style="padding-top:4px;padding-bottom:5px;font-family:Arial, Helvetica, sans-serif;font-size:12px;text-align:left;color:#333;"
+                                            width="68%">
+                                            Regards,
+                                            <br>
+                                            <strong>BOEING INDIA PRIVATE LIMITED </strong>
+                                        </td>
+                                        <td width="32%" align="center">&nbsp;</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="background-color:#E46713;" bgcolor="#E46713" align="right">
+                            <table style="background-color:#E46713;" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                <tbody>
+                                    <tr>
+                                        <td width="80%">&nbsp;</td>
+                                        <td width="20%"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </td>
+    </tr>
+</tbody>
+</html>"
