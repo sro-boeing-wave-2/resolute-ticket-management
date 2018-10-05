@@ -285,7 +285,7 @@ namespace ticket_management.Services
                 properties.Persistent = true;
 
                 var ticketToRabbitmq = await _context.TicketCollection.Find(filter).FirstOrDefaultAsync();
-                var jsonified = JsonConvert.SerializeObject(ticketToRabbitmq.ToString());
+                var jsonified = JsonConvert.SerializeObject(ticketToRabbitmq);
                 var body = Encoding.UTF8.GetBytes(jsonified);
                 Console.WriteLine("Message being sent - ");
                 Console.WriteLine(body);
