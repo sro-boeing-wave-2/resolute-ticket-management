@@ -37,7 +37,7 @@ namespace ticket_management.Services
                 factory.HostName = Environment.GetEnvironmentVariable("MACHINE_LOCAL_IPV4");
                 IConnection conn = factory.CreateConnection();
                 IModel model = conn.CreateModel();
-                model.ExchangeDeclare("ticket-notification", ExchangeType.Direct, true, false);
+                model.ExchangeDeclare("ticket-notification", ExchangeType.Direct);
                 model.QueueDeclare("tasks", true, false, false, null);
                 model.QueueDeclare("ticket-notification", true, false, false, null);
                 model.QueueBind("tasks", "ticket-notification", "tasks", null);
