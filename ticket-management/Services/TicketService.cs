@@ -389,8 +389,8 @@ namespace ticket_management.Services
             double csatscore;
             try
             {
-                //csatscore = (double)ticketscore / totalticketcount;
-                csatscore = 3.45;
+                csatscore = (double)ticketscore / totalticketcount;
+                
             }
             catch
             {
@@ -405,69 +405,14 @@ namespace ticket_management.Services
                 Avgresolutiontime = 00, Intent = "noData"
                 };
                 avgResolutionTime.Add(avgResolutiontempdata);
-            Analytics scheduledData1 = new Analytics
-            {
-                Date = date.AddDays(-9).Date,
-                Avgresolutiontime = avgResolutionTime,
-                Csatscore = 3.687
-            };
-            await _context.AnalyticsCollection.InsertOneAsync(scheduledData1);
-            Analytics scheduledData2 = new Analytics
-            {
-                Date = date.AddDays(-8).Date,
-                Avgresolutiontime = avgResolutionTime,
-                Csatscore = 4.1
-            };
-            await _context.AnalyticsCollection.InsertOneAsync(scheduledData2);
-            Analytics scheduledData3 = new Analytics
-            {
-                Date = date.AddDays(-7).Date,
-                Avgresolutiontime = avgResolutionTime,
-                Csatscore = 4.21
-            };
-            await _context.AnalyticsCollection.InsertOneAsync(scheduledData3);
+            
             Analytics scheduledData = new Analytics
             {
-                Date = date.AddDays(-6).Date,
+                Date = date.Date,
                 Avgresolutiontime = avgResolutionTime,
-                Csatscore = 4.00
+                Csatscore = csatscore
             };
             await _context.AnalyticsCollection.InsertOneAsync(scheduledData);
-            Analytics scheduledData4 = new Analytics
-            {
-                Date = date.AddDays(-5).Date,
-                Avgresolutiontime = avgResolutionTime,
-                Csatscore = 3.9
-            };
-            await _context.AnalyticsCollection.InsertOneAsync(scheduledData4);
-            Analytics scheduledData5 = new Analytics
-            {
-                Date = date.AddDays(-4).Date,
-                Avgresolutiontime = avgResolutionTime,
-                Csatscore = 3.8
-            };
-            await _context.AnalyticsCollection.InsertOneAsync(scheduledData5);
-            Analytics scheduledData6 = new Analytics
-            {
-                Date = date.AddDays(-3).Date,
-                Avgresolutiontime = avgResolutionTime,
-                Csatscore = 4.5
-            };
-            await _context.AnalyticsCollection.InsertOneAsync(scheduledData6);
-            Analytics scheduledData7 = new Analytics
-            {
-                Date = date.AddDays(-2).Date,
-                Avgresolutiontime = avgResolutionTime,
-                Csatscore = 4.1111
-            };
-            await _context.AnalyticsCollection.InsertOneAsync(scheduledData7);
-            Analytics scheduledData8 = new Analytics
-            {
-                Date = date.AddDays(-1).Date,
-                Avgresolutiontime = avgResolutionTime,
-                Csatscore = 4.654
-            };
-            await _context.AnalyticsCollection.InsertOneAsync(scheduledData8);
 
 
             return scheduledData;
