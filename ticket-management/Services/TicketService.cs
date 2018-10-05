@@ -283,6 +283,10 @@ namespace ticket_management.Services
                 properties.Persistent = true;
                 String jsonified = JsonConvert.SerializeObject(await _context.TicketCollection.Find(filterTicket).FirstOrDefaultAsync());
                 var body = Encoding.UTF8.GetBytes(jsonified);
+                Console.WriteLine("Message being sent - ");
+                Console.WriteLine(body);
+                Console.WriteLine("Message being JSON sent - ");
+                Console.WriteLine(jsonified);
                 model.BasicPublish("ticket-notification", "tasks", properties, body);
                 Console.WriteLine("Message Sent");
             }
