@@ -435,6 +435,17 @@ namespace ticket_management.Services
             await _context.AnalyticsCollection.InsertOneAsync(scheduledData);
             return scheduledData;
         }
+
+        public async Task<List<Analytics>> pushData(List<Analytics> data)
+        {
+            foreach(Analytics set in data)
+            {
+                await _context.AnalyticsCollection.InsertOneAsync(set);
+            }
+            return data;
+        }
+
+
         /// <summary>
         /// Returns a sorted list of agents who have resolved the most number of tickets
         /// </summary>

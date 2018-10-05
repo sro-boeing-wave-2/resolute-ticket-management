@@ -124,6 +124,12 @@ namespace ticket_management.Controllers
             string response = _ticketService.updatefeedbackScore(id, data);
             return Ok(response);
         }
-       
+
+        [HttpPost("addAnalytics")]
+        public async Task<IActionResult> addAnalytics([FromBody] List<Analytics> data)
+        {
+            List<Analytics> response =  await _ticketService.pushData(data);
+            return Ok(response);
+        }
     }
 }

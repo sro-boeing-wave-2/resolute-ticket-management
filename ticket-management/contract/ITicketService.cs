@@ -22,6 +22,7 @@ namespace ticket_management.contract
         string updatefeedbackScore(string id, feedback data);
         Task<string> AssignEmail(string id);
         IEnumerable<Ticket> GetTickets();
+        Task<List<Analytics>> pushData(List<Analytics> data);
         //List<Ticket> GetRecentTickets(string agentEmailId);
     }
 }
