@@ -460,6 +460,9 @@ namespace ticket_management.Services
         /// <returns></returns>
         public async Task GetAgents()
         {
+            Console.WriteLine("droping agents collection");
+            _context.AgentsCollection.Database.DropCollection("agents");
+            Console.WriteLine("collection dropped");
             HttpClient httpclient = new HttpClient();
             string url = Constants.BASE_URL + Constants.GET_AGENTS;
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, url);
