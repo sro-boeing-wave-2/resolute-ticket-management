@@ -28,7 +28,27 @@ namespace ticket_management.Services
         public TicketService(IOptions<Settings> settings)
         {
             _context = new TicketContext(settings);
-            GetAgents().Wait();
+            try
+            {
+                Console.WriteLine("creating Exchanges and Queues -");
+                ConnectionFactory factory = new ConnectionFactory();
+                factory.UserName = "guest";
+                factory.Password = "guest";
+                factory.HostName = Environment.GetEnvironmentVariable("MACHINE_LOCAL_IPV4");
+                IConnection conn = factory.CreateConnection();
+                IModel model = conn.CreateModel();
+                model.ExchangeDeclare("ticket-notification", ExchangeType.Direct);
+                model.QueueDeclare("tasks", false, false, false, null);
+                model.QueueDeclare("ticket-notification", false, false, false, null);
+                model.QueueBind("tasks", "ticket-notification", "tasks", null);
+                model.QueueBind("ticket-notification", "ticket-notification", "ticket-notification", null);
+                Console.WriteLine("successfully created exchanges and queues");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+                GetAgents().Wait();
             GetEndUsers().Wait();
 
         }
