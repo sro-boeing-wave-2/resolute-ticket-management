@@ -38,8 +38,8 @@ namespace ticket_management.Services
                 IConnection conn = factory.CreateConnection();
                 IModel model = conn.CreateModel();
                 model.ExchangeDeclare("ticket-notification", ExchangeType.Direct, true, false);
-                model.QueueDeclare("tasks", false, false, false, null);
-                model.QueueDeclare("ticket-notification", false, false, false, null);
+                model.QueueDeclare("tasks", true, false, false, null);
+                model.QueueDeclare("ticket-notification", true, false, false, null);
                 model.QueueBind("tasks", "ticket-notification", "tasks", null);
                 model.QueueBind("ticket-notification", "ticket-notification", "ticket-notification", null);
                 Console.WriteLine("successfully created exchanges and queues");
