@@ -264,6 +264,7 @@ namespace ticket_management.Services
             var sid = new ObjectId(ticketid);
             var filter = Builders<Ticket>.Filter.Eq("TicketId", sid);
             var ticket =  _context.TicketCollection.Find(filter).FirstOrDefault();
+            
 
             var update = Builders<Ticket>.Update
                         .Set(x => x.Status, status ?? ticket.Status)
@@ -274,29 +275,32 @@ namespace ticket_management.Services
                         .Set(x => x.UpdatedOn, DateTime.Now)
                         .Set(x=> x.UpdatedBy , ticket.AgentEmailid);           
             
-            _context.TicketCollection.UpdateOne(filter, update);
-            var filterTicket = Builders<Ticket>.Filter.Eq("AgentEmailId", ticket.AgentEmailid);
-            var factory = new ConnectionFactory() { HostName = Environment.GetEnvironmentVariable("MACHINE_LOCAL_IPV4")};
-            using (var connection = factory.CreateConnection())
-            using (var channel = connection.CreateModel())
-            {
-                var model = connection.CreateModel();
-                var properties = model.CreateBasicProperties();
-                properties.Persistent = true;
 
-                var ticketToRabbitmq = await _context.TicketCollection.Find(filter).FirstOrDefaultAsync();
-                var jsonified = JsonConvert.SerializeObject(ticketToRabbitmq);
-                var body = Encoding.UTF8.GetBytes(jsonified);
-                Console.WriteLine("Message being sent - ");
-                Console.WriteLine(body);
-                Console.WriteLine("Message being JSON sent - ");
-                Console.WriteLine(jsonified);
-                model.BasicPublish("ticket-notification", "tasks", properties, body);
-                Console.WriteLine("Message Sent");
-            }
+            _context.TicketCollection.UpdateOne(filter, update);
+            
 
             if (status == "close")
             {
+                var filterTicket = Builders<Ticket>.Filter.Eq("AgentEmailId", ticket.AgentEmailid);
+                var factory = new ConnectionFactory() { HostName = Environment.GetEnvironmentVariable("MACHINE_LOCAL_IPV4") };
+                using (var connection = factory.CreateConnection())
+                using (var channel = connection.CreateModel())
+                {
+                    var model = connection.CreateModel();
+                    var properties = model.CreateBasicProperties();
+                    properties.Persistent = true;
+
+                    var ticketToRabbitmq = await _context.TicketCollection.Find(filter).FirstOrDefaultAsync();
+                    var jsonified = JsonConvert.SerializeObject(ticketToRabbitmq);
+                    var body = Encoding.UTF8.GetBytes(jsonified);
+                    Console.WriteLine("Message being sent - ");
+                    Console.WriteLine(body);
+                    Console.WriteLine("Message being JSON sent - ");
+                    Console.WriteLine(jsonified);
+                    model.BasicPublish("ticket-notification", "tasks", properties, body);
+                    Console.WriteLine("Message Sent");
+                }
+
                 try
                 {
                     EmailNotificationService service = new EmailNotificationService();
