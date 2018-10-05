@@ -369,6 +369,7 @@ namespace ticket_management.Services
         public async Task<Analytics> PushAnalytics()
         {
             DateTime date = DateTime.Now;
+            
             List<Ticket> ClosedTickets = _context.TicketCollection.AsQueryable()
                 .Where(x => x.Status == "close").ToList();
 
@@ -388,39 +389,17 @@ namespace ticket_management.Services
             double csatscore;
             try
             {
-                csatscore = (double)ticketscore / totalticketcount;
+                //csatscore = (double)ticketscore / totalticketcount;
+                csatscore = 3.45;
             }
             catch
             {
                 csatscore = 0;
             }
 
-            //HttpClient http = new HttpClient();
-            //string url =  Constants.BASE_URL + Constants.GET_INTENT;
-            //HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, url);
-            //requestMessage.Headers.Add("Access", "Allow_Service");
-            //var response = await http.SendAsync(requestMessage);
-            //var result = await response.Content.ReadAsStringAsync();
-            //Intent intents = JsonConvert.DeserializeObject<Intent>(result);
-            //List<Ticket> listOfTickets = new List<Ticket>();
+            
             List<AvgResolutionTime> avgResolutionTime = new  List<AvgResolutionTime>();
-            //if (intents.results.Count() != 0)
-            //{
-            //    foreach (string intent in intents.results)
-            //    {
-            //        TimeSpan totalhours = new TimeSpan();
-            //        AvgResolutionTime avgresolutiondata = new AvgResolutionTime();
-            //        listOfTickets = _context.TicketCollection.AsQueryable().Where(x => x.Status == "close" && x.Intent == intent).ToList();
-            //        avgresolutiondata.Intent = intent;
-            //        foreach (Ticket ticket in listOfTickets)
-            //        {
-            //            totalhours += (DateTime)ticket.Closedon - (DateTime)ticket.CreatedOn;
-            //        }
-            //        avgresolutiondata.Avgresolutiontime = totalhours.Hours;
-            //        avgResolutionTime.Add(avgresolutiondata);
-            //    }
-            //}
-
+            
 
             AvgResolutionTime avgResolutiontempdata = new AvgResolutionTime() {
                 Avgresolutiontime = 00, Intent = "noData"
@@ -428,21 +407,12 @@ namespace ticket_management.Services
                 avgResolutionTime.Add(avgResolutiontempdata);
             Analytics scheduledData = new Analytics
             {
-                Date = date.Date,
+                Date = date.AddDays(-10).Date,
                 Avgresolutiontime = avgResolutionTime,
                 Csatscore = csatscore
             };
             await _context.AnalyticsCollection.InsertOneAsync(scheduledData);
             return scheduledData;
-        }
-
-        public async Task<List<Analytics>> pushData(List<Analytics> data)
-        {
-            foreach(Analytics set in data)
-            {
-                await _context.AnalyticsCollection.InsertOneAsync(set);
-            }
-            return data;
         }
 
 
