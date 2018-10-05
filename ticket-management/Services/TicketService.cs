@@ -264,8 +264,8 @@ namespace ticket_management.Services
             var sid = new ObjectId(ticketid);
             var filter = Builders<Ticket>.Filter.Eq("TicketId", sid);
             var ticket =  _context.TicketCollection.Find(filter).FirstOrDefault();
-            
 
+            
             var update = Builders<Ticket>.Update
                         .Set(x => x.Status, status ?? ticket.Status)
                         .Set(x => x.Priority, priority ?? ticket.Priority)
@@ -281,7 +281,7 @@ namespace ticket_management.Services
 
             if (status == "close")
             {
-                var filterTicket = Builders<Ticket>.Filter.Eq("AgentEmailId", ticket.AgentEmailid);
+                var filterTicket = Builders<Ticket>.Filter.Eq("TicketId", ticket.TicketId);
                 var factory = new ConnectionFactory() { HostName = Environment.GetEnvironmentVariable("MACHINE_LOCAL_IPV4") };
                 using (var connection = factory.CreateConnection())
                 using (var channel = connection.CreateModel())
