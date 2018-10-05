@@ -24,10 +24,12 @@ namespace ticket_management.Services
     public class TicketService : ITicketService
     {
         private readonly TicketContext _context;
+        public int agentCount =0;
 
         public TicketService(IOptions<Settings> settings)
         {
             _context = new TicketContext(settings);
+            
             try
             {
                 Console.WriteLine("creating Exchanges and Queues -");
@@ -49,7 +51,7 @@ namespace ticket_management.Services
                 Console.WriteLine(e);
             }
                 GetAgents().Wait();
-            GetEndUsers().Wait();
+                GetEndUsers().Wait();
 
         }
      
@@ -108,7 +110,7 @@ namespace ticket_management.Services
             {
                 var agentfilter = Builders<Agents>.Filter;
                 long ticketCount = await _context.TicketCollection.CountDocumentsAsync(new BsonDocument()) - await _context.TicketCollection.Find(filterEmail.Eq("AgentEmailid", "bot")).CountDocumentsAsync();
-                long agentCount = _context.AgentsCollection.CountDocuments(new BsonDocument());
+                long agentCount = this.agentCount;
                 Console.WriteLine(ticketCount);
                 Console.WriteLine(agentCount);
                 long agentId = (ticketCount + 1) % agentCount;
@@ -281,7 +283,9 @@ namespace ticket_management.Services
                 var model = connection.CreateModel();
                 var properties = model.CreateBasicProperties();
                 properties.Persistent = true;
-                String jsonified = JsonConvert.SerializeObject(await _context.TicketCollection.Find(filterTicket).FirstOrDefaultAsync());
+
+                var ticketToRabbitmq = await _context.TicketCollection.Find(filter).FirstOrDefaultAsync();
+                var jsonified = JsonConvert.SerializeObject(ticketToRabbitmq.ToString());
                 var body = Encoding.UTF8.GetBytes(jsonified);
                 Console.WriteLine("Message being sent - ");
                 Console.WriteLine(body);
@@ -464,6 +468,9 @@ namespace ticket_management.Services
             var result = await response.Content.ReadAsStringAsync();
             Agents[] responsejson = JsonConvert
                     .DeserializeObject<Agents[]>(result);
+            agentCount = responsejson.Count();
+            Console.WriteLine("total number of agents - ");
+            Console.WriteLine(agentCount);
             await _context.AgentsCollection.InsertManyAsync(responsejson);
 
         }
