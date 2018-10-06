@@ -123,6 +123,20 @@ namespace ticket_management.Services
             var filter = Builders<Ticket>.Filter;
             var update = Builders<Ticket>.Update;
             await _context.TicketCollection.UpdateOneAsync(filter.Eq("TicketId", id),update.Set(x => x.AgentEmailid , agentEmailId));
+
+            var factory = new ConnectionFactory() { HostName = "13.126.8.255" };//Environment.GetEnvironmentVariable("MACHINE_LOCAL_IPV4") };
+            using (var connection = factory.CreateConnection())
+            using (var channel = connection.CreateModel())
+            {
+                var model = connection.CreateModel();
+                var properties = model.CreateBasicProperties();
+                properties.Persistent = true;
+                String jsonified = JsonConvert.SerializeObject(await _context.TicketCollection.Find(filter.Eq("TicketId", id)).FirstOrDefaultAsync());
+                var body = Encoding.UTF8.GetBytes(jsonified);
+                model.BasicPublish("ticket-notification", "ticket-notification", properties, body);
+                Console.WriteLine("Message Sent");
+            }
+
             return agentEmailId;
         }
 
@@ -153,21 +167,9 @@ namespace ticket_management.Services
             var filter = Builders<EndUser>.Filter.Eq("Email", chat.UserEmail);
             ticket.UserName = (await _context.EndUsersCollection.Find(filter).FirstOrDefaultAsync()).Name;
             ticket.UserImageUrl = (await _context.EndUsersCollection.Find(filter).FirstOrDefaultAsync()).ProfileImgUrl;
-            var filterTicket = Builders<Ticket>.Filter.Eq("UserEmailId", chat.UserEmail);
             await _context.TicketCollection.InsertOneAsync(ticket);
            
-            var factory = new ConnectionFactory() { HostName = Environment.GetEnvironmentVariable("MACHINE_LOCAL_IPV4")};
-            using (var connection = factory.CreateConnection())
-            using (var channel = connection.CreateModel())
-            {
-                var model = connection.CreateModel();
-                var properties = model.CreateBasicProperties();
-                properties.Persistent = true;
-                String jsonified = JsonConvert.SerializeObject(await _context.TicketCollection.Find(filterTicket).FirstOrDefaultAsync());
-                var body = Encoding.UTF8.GetBytes(jsonified);
-                model.BasicPublish("ticket-notification", "ticket-notification", properties, body);
-                Console.WriteLine("Message Sent");
-            }
+           
             
                 try
                 {
@@ -282,7 +284,7 @@ namespace ticket_management.Services
             if (status == "close")
             {
                 var filterTicket = Builders<Ticket>.Filter.Eq("TicketId", ticket.TicketId);
-                var factory = new ConnectionFactory() { HostName = Environment.GetEnvironmentVariable("MACHINE_LOCAL_IPV4") };
+                var factory = new ConnectionFactory() { HostName = "13.126.8.255" };//Environment.GetEnvironmentVariable("MACHINE_LOCAL_IPV4") };
                 using (var connection = factory.CreateConnection())
                 using (var channel = connection.CreateModel())
                 {
