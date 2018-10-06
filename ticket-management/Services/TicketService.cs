@@ -33,10 +33,13 @@ namespace ticket_management.Services
             try
             {
                 Console.WriteLine("creating Exchanges and Queues -");
-                ConnectionFactory factory = new ConnectionFactory();
-                factory.UserName = "guest";
-                factory.Password = "guest";
-                factory.HostName = Environment.GetEnvironmentVariable("MACHINE_LOCAL_IPV4");
+                ConnectionFactory factory = new ConnectionFactory()
+                {
+                    UserName = "guest",
+                    Password = "guest",
+                    HostName = Environment.GetEnvironmentVariable("MACHINE_LOCAL_IPV4"),
+                    Port = 5672,
+                };
                 IConnection conn = factory.CreateConnection();
                 IModel model = conn.CreateModel();
                 model.ExchangeDeclare("ticket-notification", ExchangeType.Direct);
@@ -124,7 +127,7 @@ namespace ticket_management.Services
             var update = Builders<Ticket>.Update;
             await _context.TicketCollection.UpdateOneAsync(filter.Eq("TicketId", id),update.Set(x => x.AgentEmailid , agentEmailId));
 
-            var factory = new ConnectionFactory() { HostName = "13.126.8.255" };//Environment.GetEnvironmentVariable("MACHINE_LOCAL_IPV4") };
+            var factory = new ConnectionFactory() { HostName = Environment.GetEnvironmentVariable("MACHINE_LOCAL_IPV4") };
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
             {
@@ -284,7 +287,7 @@ namespace ticket_management.Services
             if (status == "close")
             {
                 var filterTicket = Builders<Ticket>.Filter.Eq("TicketId", ticket.TicketId);
-                var factory = new ConnectionFactory() { HostName = "13.126.8.255" };//Environment.GetEnvironmentVariable("MACHINE_LOCAL_IPV4") };
+                var factory = new ConnectionFactory() { HostName = Environment.GetEnvironmentVariable("MACHINE_LOCAL_IPV4") };
                 using (var connection = factory.CreateConnection())
                 using (var channel = connection.CreateModel())
                 {
