@@ -308,6 +308,52 @@ namespace ticket_management.Services
 
                 try
                 {
+                    DateTime date = DateTime.Now;
+                    List<Ticket> ClosedTickets = _context.TicketCollection.AsQueryable()
+                        .Where(x => x.Status == "close").ToList();
+                    int ticketscore = 0;
+                    int totalticketcount = 0;
+                    foreach (Ticket Cticket in ClosedTickets)
+                    {
+                        if (Cticket.Feedbackscore > 0)
+                        {
+                            totalticketcount++;
+                            if (Cticket.Feedbackscore > 3)
+                                ticketscore += Cticket.Feedbackscore.Value;
+                        }
+                    }
+                    double csatscore;
+                    try
+                    {
+                        csatscore = (double)ticketscore / totalticketcount;
+
+                    }
+                    catch
+                    {
+                        csatscore = 0;
+                    }
+
+                    List<AvgResolutionTime> avgResolutionTime = new List<AvgResolutionTime>();
+                    AvgResolutionTime avgResolutiontempdata = new AvgResolutionTime()
+                    {
+                        Avgresolutiontime = 00,
+                        Intent = "noData"
+                    };
+                    avgResolutionTime.Add(avgResolutiontempdata);
+                    Analytics scheduledData = new Analytics
+                    {
+                        Date = date,
+                        Avgresolutiontime = avgResolutionTime,
+                        Csatscore = csatscore
+                    };
+                    await _context.AnalyticsCollection.InsertOneAsync(scheduledData);
+                }
+                catch {
+                    Console.WriteLine("couldn't upload analytics");
+                }
+                try
+                {
+
                     EmailNotificationService service = new EmailNotificationService();
                     var template = await System.IO.File.ReadAllTextAsync("./htmlPages/closeTicketNotification.txt");
                     template = template.Replace("$${TicketId}", ticket.TicketId);
@@ -417,7 +463,7 @@ namespace ticket_management.Services
                 Avgresolutiontime = avgResolutionTime,
                 Csatscore = csatscore
             };
-            await _context.AnalyticsCollection.InsertOneAsync(scheduledData);
+            // await _context.AnalyticsCollection.InsertOneAsync(scheduledData);
 
 
             return scheduledData;
