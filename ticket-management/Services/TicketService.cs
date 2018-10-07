@@ -314,9 +314,9 @@ namespace ticket_management.Services
                     template = template.Replace("$${Query}", ticket.Description);
                     var Mailbody = template;
                     service.Sendmail(
-                       "saikiran290695@gmail.com",
+                       "resolute.stackroute@gmail.com",
                        "vasamsettisaikiran95@gmail.com",
-                       "garysai95",
+                       "resolute@123",
                        "Resolute Ticket Status", Mailbody, "Resolute", "client"
                        );
                 }
