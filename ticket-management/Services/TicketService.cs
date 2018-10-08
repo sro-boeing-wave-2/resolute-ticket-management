@@ -481,7 +481,7 @@ namespace ticket_management.Services
 
             Analytics scheduledData2 = new Analytics
             {
-                Date = date.AddDays(-9).Date,
+                Date = date.AddDays(-8).Date,
                 Avgresolutiontime = avgResolutionTime,
                 Csatscore = 4.2
             };
@@ -489,7 +489,7 @@ namespace ticket_management.Services
 
             Analytics scheduledData3 = new Analytics
             {
-                Date = date.AddDays(-9).Date,
+                Date = date.AddDays(-7).Date,
                 Avgresolutiontime = avgResolutionTime,
                 Csatscore = 4.0
             };
@@ -497,7 +497,7 @@ namespace ticket_management.Services
 
             Analytics scheduledData4 = new Analytics
             {
-                Date = date.AddDays(-9).Date,
+                Date = date.AddDays(-6).Date,
                 Avgresolutiontime = avgResolutionTime,
                 Csatscore = 4.24
             };
@@ -505,7 +505,7 @@ namespace ticket_management.Services
 
             Analytics scheduledData5 = new Analytics
             {
-                Date = date.AddDays(-9).Date,
+                Date = date.AddDays(-5).Date,
                 Avgresolutiontime = avgResolutionTime,
                 Csatscore = 4.6
             };
@@ -513,7 +513,7 @@ namespace ticket_management.Services
 
             Analytics scheduledData6 = new Analytics
             {
-                Date = date.AddDays(-9).Date,
+                Date = date.AddDays(-4).Date,
                 Avgresolutiontime = avgResolutionTime,
                 Csatscore = 4.11
             };
@@ -521,12 +521,19 @@ namespace ticket_management.Services
 
             Analytics scheduledData7 = new Analytics
             {
-                Date = date.AddDays(-9).Date,
+                Date = date.AddDays(-3).Date,
                 Avgresolutiontime = avgResolutionTime,
                 Csatscore = 4.122
             };
             await _context.AnalyticsCollection.InsertOneAsync(scheduledData7);
 
+            Analytics scheduledData8 = new Analytics
+            {
+                Date = date.AddDays(-2).Date,
+                Avgresolutiontime = avgResolutionTime,
+                Csatscore = 4.122
+            };
+            await _context.AnalyticsCollection.InsertOneAsync(scheduledData8);
 
 
 
