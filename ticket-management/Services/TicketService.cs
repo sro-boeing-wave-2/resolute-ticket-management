@@ -306,54 +306,54 @@ namespace ticket_management.Services
                     Console.WriteLine("Message Sent");
                 }
 
-                try
-                {
-                    DateTime date = DateTime.Now;
-                    List<Ticket> ClosedTickets = _context.TicketCollection.AsQueryable()
-                        .Where(x => x.Status == "close").ToList();
-                    int ticketscore = 0;
-                    int totalticketcount = 0;
-                    foreach (Ticket Cticket in ClosedTickets)
-                    {
-                        if (Cticket.Feedbackscore > 0)
-                        {
-                            totalticketcount++;
-                            if (Cticket.Feedbackscore > 3)
-                                ticketscore += Cticket.Feedbackscore.Value;
-                        }
-                    }
-                    double csatscore;
-                    try
-                    {
-                        csatscore = (double)ticketscore / totalticketcount;
+                //try
+                //{
+                //    DateTime date = DateTime.Now;
+                //    List<Ticket> ClosedTickets = _context.TicketCollection.AsQueryable()
+                //        .Where(x => x.Status == "close").ToList();
+                //    int ticketscore = 0;
+                //    int totalticketcount = 0;
+                //    foreach (Ticket Cticket in ClosedTickets)
+                //    {
+                //        if (Cticket.Feedbackscore > 0)
+                //        {
+                //            totalticketcount++;
+                //            if (Cticket.Feedbackscore > 3)
+                //                ticketscore += Cticket.Feedbackscore.Value;
+                //        }
+                //    }
+                //    double csatscore;
+                //    try
+                //    {
+                //        csatscore = (double)ticketscore / totalticketcount;
 
-                    }
-                    catch
-                    {
-                        csatscore = 0;
-                    }
+                //    }
+                //    catch
+                //    {
+                //        csatscore = 0;
+                //    }
 
-                    List<AvgResolutionTime> avgResolutionTime = new List<AvgResolutionTime>();
-                    AvgResolutionTime avgResolutiontempdata = new AvgResolutionTime()
-                    {
-                        Avgresolutiontime = 00,
-                        Intent = "noData"
-                    };
-                    avgResolutionTime.Add(avgResolutiontempdata);
-                    Analytics scheduledData = new Analytics
-                    {
-                        Date = date,
-                        Avgresolutiontime = avgResolutionTime,
-                        Csatscore = csatscore
-                    };
-                    if(csatscore != 0) {
-                        await _context.AnalyticsCollection.InsertOneAsync(scheduledData);
-                    }
+                //    List<AvgResolutionTime> avgResolutionTime = new List<AvgResolutionTime>();
+                //    AvgResolutionTime avgResolutiontempdata = new AvgResolutionTime()
+                //    {
+                //        Avgresolutiontime = 00,
+                //        Intent = "noData"
+                //    };
+                //    avgResolutionTime.Add(avgResolutiontempdata);
+                //    Analytics scheduledData = new Analytics
+                //    {
+                //        Date = date,
+                //        Avgresolutiontime = avgResolutionTime,
+                //        Csatscore = csatscore
+                //    };
+                //    if(csatscore != 0) {
+                //        await _context.AnalyticsCollection.InsertOneAsync(scheduledData);
+                //    }
                     
-                }
-                catch {
-                    Console.WriteLine("couldn't upload analytics");
-                }
+                //}
+                //catch {
+                //    Console.WriteLine("couldn't upload analytics");
+                //}
                 try
                 {
 
@@ -459,14 +459,75 @@ namespace ticket_management.Services
                 Avgresolutiontime = 00, Intent = "noData"
                 };
                 avgResolutionTime.Add(avgResolutiontempdata);
+
             
+
+
             Analytics scheduledData = new Analytics
             {
-                Date = date.Date,
+                Date =  date.AddDays(-10).Date,
                 Avgresolutiontime = avgResolutionTime,
-                Csatscore = csatscore
+                Csatscore = 3.45
             };
-            // await _context.AnalyticsCollection.InsertOneAsync(scheduledData);
+            await _context.AnalyticsCollection.InsertOneAsync(scheduledData);
+
+            Analytics scheduledData1 = new Analytics
+            {
+                Date = date.AddDays(-9).Date,
+                Avgresolutiontime = avgResolutionTime,
+                Csatscore = 3.1
+            };
+            await _context.AnalyticsCollection.InsertOneAsync(scheduledData1);
+
+            Analytics scheduledData2 = new Analytics
+            {
+                Date = date.AddDays(-9).Date,
+                Avgresolutiontime = avgResolutionTime,
+                Csatscore = 4.2
+            };
+            await _context.AnalyticsCollection.InsertOneAsync(scheduledData2);
+
+            Analytics scheduledData3 = new Analytics
+            {
+                Date = date.AddDays(-9).Date,
+                Avgresolutiontime = avgResolutionTime,
+                Csatscore = 4.0
+            };
+            await _context.AnalyticsCollection.InsertOneAsync(scheduledData3);
+
+            Analytics scheduledData4 = new Analytics
+            {
+                Date = date.AddDays(-9).Date,
+                Avgresolutiontime = avgResolutionTime,
+                Csatscore = 4.24
+            };
+            await _context.AnalyticsCollection.InsertOneAsync(scheduledData4);
+
+            Analytics scheduledData5 = new Analytics
+            {
+                Date = date.AddDays(-9).Date,
+                Avgresolutiontime = avgResolutionTime,
+                Csatscore = 4.6
+            };
+            await _context.AnalyticsCollection.InsertOneAsync(scheduledData5);
+
+            Analytics scheduledData6 = new Analytics
+            {
+                Date = date.AddDays(-9).Date,
+                Avgresolutiontime = avgResolutionTime,
+                Csatscore = 4.11
+            };
+            await _context.AnalyticsCollection.InsertOneAsync(scheduledData6);
+
+            Analytics scheduledData7 = new Analytics
+            {
+                Date = date.AddDays(-9).Date,
+                Avgresolutiontime = avgResolutionTime,
+                Csatscore = 4.122
+            };
+            await _context.AnalyticsCollection.InsertOneAsync(scheduledData7);
+
+
 
 
             return scheduledData;
