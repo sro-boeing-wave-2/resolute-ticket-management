@@ -346,7 +346,10 @@ namespace ticket_management.Services
                         Avgresolutiontime = avgResolutionTime,
                         Csatscore = csatscore
                     };
-                    await _context.AnalyticsCollection.InsertOneAsync(scheduledData);
+                    if(csatscore != 0) {
+                        await _context.AnalyticsCollection.InsertOneAsync(scheduledData);
+                    }
+                    
                 }
                 catch {
                     Console.WriteLine("couldn't upload analytics");
